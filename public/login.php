@@ -21,7 +21,7 @@
 
       const nama = document.getElementById('nama').value;
       const password = document.getElementById('password').value;
-      const alamat = 'https://svr1.jkei.jvckenwood.com/api/test.php'; // ganti sesuai alamat server Anda
+      const alamat = 'https://svr1.jkei.jvckenwood.com/api/login.php'; // ganti sesuai alamat server Anda
       // const alamat = 'http://136.198.117.118/api/test1.php'; // ganti sesuai alamat server Anda
       try {
         const response = await fetch(alamat, {

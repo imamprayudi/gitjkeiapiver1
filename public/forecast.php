@@ -27,7 +27,7 @@ if (isset($_SESSION['user'])) {
     <script>
       
     async function getSupplier(){
-      const alamat = 'https://svr1.jkei.jvckenwood.com/api/test.php'; // ganti sesuai alamat server Anda
+      const alamat = 'https://svr1.jkei.jvckenwood.com/api/supp.php'; // ganti sesuai alamat server Anda
       //const alamat = 'http://136.198.117.118/api/supp.php'; // ganti sesuai alamat server Anda
       const nama = '<?php echo $_SESSION['user']; ?>';
 

@@ -12,6 +12,12 @@ if (isset($_SESSION['user'])) {
   </head>
   <body>
     <?php include 'menu.php'; ?>
+    <br />
+    <img src="assets/gambar/jvc.gif" alt="JVC KENWOOD CORPORATION" 
+    style="float:left;width:220px;height:35px;">
+    PT JVCKENWOOD ELECTRONICS INDONESIA<br />
+    PART PURCHASE LONG FORECAST <br /><br />
+
     <form action="">Supplier : &nbsp;&nbsp;
       <select name="supp" id="idsupp">
       </select>&nbsp;&nbsp;

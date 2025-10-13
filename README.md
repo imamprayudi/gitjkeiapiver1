@@ -1,2 +1,15 @@
 # gitjkeiapiver1
-JKEI WEB di GIT akses ke JKEI Web Server via API
+JKEI WEB di GIT akses ke JKEI Web Server via 
+
+Programmer      : IMAM PRAYUDI
+PROJECT CREATED : 10 OKTOBER 2025
+
+Coding using :
+HTML
+CSS
+JAVASCRIPT
+PHP 
+FRAMEWORK : 
+PHP NATIVE
+
+BUILD APP ON GIT USE API TO JKEI WEB

@@ -14,15 +14,17 @@
   </form>
 
   <div id="hasil"></div>
-
+  <?php
+  $env = parse_ini_file(__DIR__ . '/../config/.env');
+  $loginurl = $env['API_LOGIN_URL'];
+  ?>
   <script>
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
       e.preventDefault(); // cegah reload halaman
 
       const nama = document.getElementById('nama').value;
       const password = document.getElementById('password').value;
-      const alamat = 'https://svr1.jkei.jvckenwood.com/api/login.php'; // ganti sesuai alamat server Anda
-      // const alamat = 'http://136.198.117.118/api/test1.php'; // ganti sesuai alamat server Anda
+      const alamat = '<?=$loginurl?>';
       try {
         const response = await fetch(alamat, {
           method: 'POST',
@@ -36,20 +38,16 @@
           })
         });
 
-        const reply = await response.text(); // ambil balasan dari PHP
+        const reply = await response.text();
         document.getElementById('hasil').innerHTML = reply;
 
-        // contoh: cek isi balasan dari PHP
         if (reply.includes('success')) {
           const isidata = JSON.parse(reply);
           const nama = isidata.data[0];
           const level = isidata.data[1];
-          // Buat URL dengan parameter GET
-          const url = `makesession.php?nama=${encodeURIComponent(nama)}&level=${encodeURIComponent(level)}`;
+          const url = `../config/makesession.php?nama=${encodeURIComponent(nama)}&level=${encodeURIComponent(level)}`;
           console.log(url);
-          // Redirect ke halaman PHP
           window.location.href = url;
-         //window.location.href = 'makesession.php';
         }
       } catch (error) {
         document.getElementById('hasil').innerHTML = 'Terjadi kesalahan koneksi.';

@@ -2,6 +2,8 @@
 <?php
 session_start();
 if (isset($_SESSION['user'])) {
+  $env = parse_ini_file(__DIR__ . '/../config/.env');
+  $suppurl = $env['API_SUPP_URL'];
 ?>
   <html lang="en">
   <head>
@@ -34,11 +36,9 @@ if (isset($_SESSION['user'])) {
     <script>
       
     async function getSupplier(){
-      const alamat = 'https://svr1.jkei.jvckenwood.com/api/supp.php'; // ganti sesuai alamat server Anda
-      //const alamat = 'http://136.198.117.118/api/supp.php'; // ganti sesuai alamat server Anda
+      const alamat = '<?=$suppurl?>';
       const nama = '<?php echo $_SESSION['user']; ?>';
-
-try {
+      try {
         const response = await fetch(alamat, {
           method: 'POST',
           credentials: "include",
@@ -54,14 +54,8 @@ try {
         const isidata = JSON.parse(reply);
         console.log(isidata);
 
-
-
       const selectsupp = document.getElementById('idsupp');
       console.log(selectsupp.value);
-      //fetch('data.json')
-      //.then(response => response.json())
-      //.then(data => {
-      // Loop data JSON
         isidata.forEach((item, index) => {
         const option = document.createElement('option');
         option.value = item.kode;       // nilai option
@@ -72,10 +66,7 @@ try {
         selectsupp.appendChild(option);
         });
       
-     // })
-     // .catch(error => console.error('Gagal ambil data:', error));
     } catch (error) {
-       // document.getElementById('hasil').innerHTML = 'Terjadi kesalahan koneksi.';
         console.error(error);
       }
     }

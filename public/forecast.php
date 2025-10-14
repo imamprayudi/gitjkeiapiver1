@@ -5,8 +5,8 @@ if (isset($_SESSION['user'])) {
   $appkey = $_SESSION['appkey'];
   $env = parse_ini_file(__DIR__ . '/../config/.env');
   $suppurl = $env['API_SUPP_URL'];
-  $getkey = $env['GET_KEY'];
-  if ($appkey !== $getkey) {
+  $envappkey = $env['APP_KEY'];
+  if ($appkey !== $envappkey) {
     header("Location: login.php");
     exit();
   }

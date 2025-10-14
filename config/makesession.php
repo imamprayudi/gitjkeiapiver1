@@ -8,7 +8,7 @@ session_start();
 
 //$env = parse_ini_file(__DIR__ . 'config/.env');
 $env = parse_ini_file(__DIR__ . '/../config/.env');
-$getkey = trim($env['GET_KEY']);
+$envappkey = trim($env['APP_KEY']);
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if (empty($_GET['nama'])) {
     echo "Error";
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $getkeyget = trim($_GET['getkey']);  
     $_SESSION['user'] = $nama;
     $_SESSION['level'] = $_GET['level'];
-    $_SESSION['appkey'] = $getkey;
+    $_SESSION['appkey'] = $envappkey;
     header("Location: ../public/dashboard.php");
   }
 }

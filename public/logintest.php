@@ -17,7 +17,8 @@
   <?php
   $env = parse_ini_file(__DIR__ . '/../config/.env');
   $loginurl = $env['API_LOGIN_URL'];
-  $getkey = $env['GET_KEY'];
+  //$getkey = $env['GET_KEY'];
+  $getkey = 'key123'; //tes
   ?>
   <script>
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
@@ -46,7 +47,7 @@
           const isidata = JSON.parse(reply);
           const nama = isidata.data[0];
           const level = isidata.data[1];
-          const url = `../config/makesession.php?nama=${encodeURIComponent(nama)}&level=${encodeURIComponent(level)}`;
+          const url = `../config/makesession.php?nama=${encodeURIComponent(nama)}&level=${encodeURIComponent(level)}&getkey=<?=$getkey?>`;
           window.location.href = url;
         }
       } catch (error) {

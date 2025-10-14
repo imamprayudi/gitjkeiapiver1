@@ -3,6 +3,14 @@
 // Mulai session dulu — wajib sebelum akses $_SESSION
 session_start();
 if (isset($_SESSION['user'])) {
+  $appkey = $_SESSION['appkey'];
+  $env = parse_ini_file(__DIR__ . '/../config/.env');
+  $getkey = $env['GET_KEY'];
+  if ($appkey !== $getkey) {
+    header("Location: login.php");
+    exit();
+  }
+   
 ?>
 <html lang="en">
 <head>

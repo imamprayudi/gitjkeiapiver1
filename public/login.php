@@ -40,13 +40,15 @@
         });
 
         const reply = await response.text();
+        console.log('Response:', reply);
         document.getElementById('hasil').innerHTML = reply;
 
         if (reply.includes('success')) {
           const isidata = JSON.parse(reply);
           const nama = isidata.data[0];
           const level = isidata.data[1];
-          const url = `../config/makesession.php?nama=${encodeURIComponent(nama)}&level=${encodeURIComponent(level)}`;
+          const getkey = isidata.data[2];
+          const url = `../config/makesession.php?nama=${encodeURIComponent(nama)}&level=${encodeURIComponent(level)}&getkey=${encodeURIComponent(getkey)}`;
           window.location.href = url;
         }
       } catch (error) {

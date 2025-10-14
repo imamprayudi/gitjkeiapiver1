@@ -57,8 +57,7 @@ if (isset($_SESSION['user'])) {
         });
 
         const reply = await response.text(); // ambil balasan dari PHP
-        const isidata = JSON.parse(reply);
-        console.log(isidata);
+        const isidata = JSON.parse(reply);  
 
       const selectsupp = document.getElementById('idsupp');
       console.log(selectsupp.value);

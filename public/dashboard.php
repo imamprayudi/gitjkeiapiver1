@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <?php
-// Mulai session dulu — wajib sebelum akses $_SESSION
 session_start();
 if (isset($_SESSION['user'])) {
   $appkey = $_SESSION['appkey'];

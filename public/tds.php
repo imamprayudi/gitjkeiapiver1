@@ -5,6 +5,7 @@ if (isset($_SESSION['user'])) {
   $appkey = $_SESSION['appkey'];
   $env = parse_ini_file(__DIR__ . '/../config/.env');
   $suppurl = $env['API_SUPP_URL'];
+  $tdstglurl = $env['API_TDS_TGL_URL'];
   $envappkey = $env['APP_KEY'];
   if ($appkey !== $envappkey) {
     header("Location: login.php");
@@ -25,16 +26,15 @@ if (isset($_SESSION['user'])) {
     <img src="assets/gambar/jvc.gif" alt="JVC KENWOOD CORPORATION" 
     style="float:left;width:220px;height:35px;">
     PT JVCKENWOOD ELECTRONICS INDONESIA<br />
-    PART PURCHASE LONG FORECAST <br /><br />
+    TIME DELIVERY SCHEDULE<br /><br />
 
-    <form action="">Supplier : &nbsp;&nbsp;
+    <form action="">
+      Supplier : &nbsp;&nbsp;
       <select name="supp" id="idsupp">
       </select>&nbsp;&nbsp;
-      <select name="tipe" id="idtipe">
-        <option value="1">Weekly</option>
-        <option value="2">Monthly</option>
-      </select>
-      &nbsp;&nbsp;
+      Transmission Date : &nbsp;&nbsp;
+      <select name="tanggal" id="idtanggal">
+      </select>&nbsp;&nbsp;  
       <input type=BUTTON value="Display" name="mybtn" id="btn"></input>
     </form>
  
@@ -43,7 +43,8 @@ if (isset($_SESSION['user'])) {
       
     async function getSupplier(){
       const alamat = '<?=$suppurl?>';
-      const nama = '<?php echo $_SESSION['user']; ?>';
+      const namastr = '<?php echo $_SESSION['user']; ?>';
+      const nama = namastr.trim();
       try {
         const response = await fetch(alamat, {
           method: 'POST',
@@ -75,9 +76,46 @@ if (isset($_SESSION['user'])) {
         console.error(error);
       }
     }
+// ------------------------------------------------------------------------
+async function getTanggal(){
+const alamat = '<?=$tdstglurl?>';
+      const namastr = '<?php echo $_SESSION['user']; ?>';
+      const nama = namastr.trim();
+      try {
+        const response = await fetch(alamat, {
+          method: 'POST',
+          credentials: "include",
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams({
+            nama: nama,
+          })
+        });
+
+        const reply = await response.text(); // ambil balasan dari PHP
+        const isidata = JSON.parse(reply);  
+        const selecttgl = document.getElementById('idtanggal');
+        isidata.forEach((item, index) => {
+        const option = document.createElement('option');
+        option.value = item.tanggal;       // nilai option
+        option.textContent = item.tanggal; // teks yang 
+        if (index === 0) {
+          option.selected = true;
+        }
+        selecttgl.appendChild(option);
+        });
+      
+    } catch (error) {
+        console.error(error);
+      }
+    }
+// ------------------------------------------------------------------------
     const btn = document.getElementById('btn');
 
     getSupplier();
+    getTanggal();
+    
  
     btn.addEventListener('click', function() {
     alert('Javascript Ajax code here');

@@ -1,0 +1,2 @@
+# Matikan directory listing (blokir akses folder tanpa index)
+Options -Indexes

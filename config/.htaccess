@@ -1,2 +1,7 @@
 # Matikan directory listing (blokir akses folder tanpa index)
 Options -Indexes
+
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>

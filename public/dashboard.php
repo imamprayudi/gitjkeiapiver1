@@ -20,7 +20,11 @@ if (isset($_SESSION['user'])) {
   <link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
 </head>
 <body>
-<?php include 'menu.php'; ?>
+<?php include 'menu.php';
+
+echo "<h3>Selamat datang, " . $_SESSION['user'] . "!</h3>";
+echo "<p>Level Anda: " . $_SESSION['level'] . "</p>";
+?>
  
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>

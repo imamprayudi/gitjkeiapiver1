@@ -17,8 +17,7 @@
   <?php
   $env = parse_ini_file(__DIR__ . '/../config/.env');
   $loginurl = $env['API_LOGIN_URL'];
-  //$getkey = $env['GET_KEY'];
-  $getkey = 'key123'; //tes
+  $getkey = $env['GET_KEY'];
   ?>
   <script>
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
@@ -41,13 +40,15 @@
         });
 
         const reply = await response.text();
+        console.log('Response:', reply);
         document.getElementById('hasil').innerHTML = reply;
 
         if (reply.includes('success')) {
           const isidata = JSON.parse(reply);
           const nama = isidata.data[0];
           const level = isidata.data[1];
-          const url = `../config/makesession.php?nama=${encodeURIComponent(nama)}&level=${encodeURIComponent(level)}&getkey=<?=$getkey?>`;
+          const getkey = isidata.data[2];
+          const url = `../config/makesession.php?nama=${encodeURIComponent(nama)}&level=${encodeURIComponent(level)}&getkey=${encodeURIComponent(getkey)}`;
           window.location.href = url;
         }
       } catch (error) {

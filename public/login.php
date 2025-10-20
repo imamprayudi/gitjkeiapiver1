@@ -1,61 +1,30 @@
-<!doctype html>
+<?php
+if (isset($_GET['pesan'])) {
+   // echo "Pesan : " . $_GET['pesan'];
+   $pesan = $_GET['pesan'];
+} else {
+    $pesan = "";
+}
+?>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>LOGIN</title>
+    <title>Form Login</title>
 </head>
 <body>
-  <h2>JKEI Login Page</h2>
+    <h2>Login</h2>
+    <form action="loginpost.php" method="post">
+        <label>Username:</label><br>
+        <input type="text" name="userid" required><br><br>
 
-  <form id="loginForm">
-    <label>Nama: <input type="text" id="nama" required></label><br><br>
-    <label>Password: <input type="password" id="password" required></label><br><br>
-    <button type="submit">Login</button>
-  </form>
+        <label>Password:</label><br>
+        <input type="password" name="password" required><br><br>
 
-  <div id="hasil"></div>
-  <?php
-  $env = parse_ini_file(__DIR__ . '/../config/.env');
-  $loginurl = $env['API_LOGIN_URL'];
-  $getkey = $env['GET_KEY'];
-  ?>
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', async function (e) {
-      e.preventDefault(); // cegah reload halaman
-
-      const nama = document.getElementById('nama').value;
-      const password = document.getElementById('password').value;
-      const alamat = '<?=$loginurl?>';
-      try {
-        const response = await fetch(alamat, {
-          method: 'POST',
-          credentials: "include",
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams({
-            nama: nama,
-            password: password
-          })
-        });
-
-        const reply = await response.text();
-        console.log('Response:', reply);
-        document.getElementById('hasil').innerHTML = reply;
-
-        if (reply.includes('success')) {
-          const isidata = JSON.parse(reply);
-          const nama = isidata.data[0];
-          const level = isidata.data[1];
-          const getkey = isidata.data[2];
-          const url = `../config/makesession.php?nama=${encodeURIComponent(nama)}&level=${encodeURIComponent(level)}&getkey=${encodeURIComponent(getkey)}`;
-          window.location.href = url;
-        }
-      } catch (error) {
-        document.getElementById('hasil').innerHTML = 'Terjadi kesalahan koneksi.';
-        console.error(error);
-      }
-    });
-  </script>
+        <button type="submit">Login</button>
+    </form>
+    <?php
+    echo '<br>';
+    echo $pesan;
+    ?>
 </body>
 </html>

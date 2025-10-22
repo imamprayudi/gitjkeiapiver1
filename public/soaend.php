@@ -5,7 +5,7 @@ if (isset($_SESSION['user'])) {
   $appkey = $_SESSION['appkey'];
   $env = parse_ini_file(__DIR__ . '/../config/.env');
   $suppurl = $env['API_SUPP_URL'];
-  $tdstglurl = $env['API_TDS_TGL_URL'];
+  $bpstglurl = $env['API_BPS_TGL_URL'];
   $envappkey = $env['APP_KEY'];
   if ($appkey !== $envappkey) {
     header("Location: login.php");
@@ -17,7 +17,7 @@ if (isset($_SESSION['user'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <title>Time Delivery</title>
+  <title>SOA END</title>
   <link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
   </head>
   <body>
@@ -26,7 +26,7 @@ if (isset($_SESSION['user'])) {
     <img src="assets/gambar/jvc.gif" alt="JVC KENWOOD CORPORATION" 
     style="float:left;width:220px;height:35px;">
     PT JVCKENWOOD ELECTRONICS INDONESIA<br />
-    TIME DELIVERY SCHEDULE<br /><br />
+    STATEMENT OF ACCOUNT - PAYMENT END OF MONTH<br /><br />
 
     <form action="">
       Supplier : &nbsp;&nbsp;
@@ -78,7 +78,7 @@ if (isset($_SESSION['user'])) {
     }
 // ------------------------------------------------------------------------
 async function getTanggal(){
-const alamat = '<?=$tdstglurl?>';
+const alamat = '<?=$bpstglurl?>';
       const namastr = '<?php echo $_SESSION['user']; ?>';
       const nama = namastr.trim();
       try {

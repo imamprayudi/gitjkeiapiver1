@@ -42,9 +42,9 @@
             Material
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Summary</a></li>
-            <li><a class="dropdown-item" href="#">Received Detail</a></li>
-            <li><a class="dropdown-item" href="#">Issued Detail</a></li>
+            <li><a class="dropdown-item" href="matsum.php">Summary</a></li>
+            <li><a class="dropdown-item" href="matrec.php">Received Detail</a></li>
+            <li><a class="dropdown-item" href="matiss.php">Issued Detail</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
@@ -52,9 +52,9 @@
             Statement of Account
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Detail</a></li>
-            <li><a class="dropdown-item" href="#">Mid</a></li>
-            <li><a class="dropdown-item" href="#">End</a></li>
+            <li><a class="dropdown-item" href="soa.php">Detail</a></li>
+            <li><a class="dropdown-item" href="soamid.php">Mid</a></li>
+            <li><a class="dropdown-item" href="soaend.php">End</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">

@@ -5,7 +5,7 @@ if (isset($_SESSION['user'])) {
   $appkey = $_SESSION['appkey'];
   $env = parse_ini_file(__DIR__ . '/../config/.env');
   $suppurl = $env['API_SUPP_URL'];
-  $bpstglurl = $env['API_BPS_TGL_URL'];
+  $soatglurl = $env['API_SOA_TGL_URL'];
   $envappkey = $env['APP_KEY'];
   if ($appkey !== $envappkey) {
     header("Location: login.php");
@@ -78,7 +78,7 @@ if (isset($_SESSION['user'])) {
     }
 // ------------------------------------------------------------------------
 async function getTanggal(){
-const alamat = '<?=$bpstglurl?>';
+const alamat = '<?=$soatglurl?>';
       const namastr = '<?php echo $_SESSION['user']; ?>';
       const nama = namastr.trim();
       try {

@@ -23,9 +23,9 @@
             Orders
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Purchase Order</a></li>
-            <li><a class="dropdown-item" href="#">Purchase Order Change</a></li>
-            <li><a class="dropdown-item" href="#">Order Balance</a></li>
+            <li><a class="dropdown-item" href="po.php">Purchase Order</a></li>
+            <li><a class="dropdown-item" href="poc.php">Purchase Order Change</a></li>
+            <li><a class="dropdown-item" href="ob.php">Order Balance</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">

@@ -27,7 +27,7 @@ if (isset($_SESSION['user'])) {
     PT JVCKENWOOD ELECTRONICS INDONESIA<br />
     ORDER BALANCE <br /><br />
 
-    <form action="">Supplier : &nbsp;&nbsp;
+    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">Supplier : &nbsp;&nbsp;
       <select name="supp" id="idsupp">
       </select>&nbsp;&nbsp;Order By : &nbsp;&nbsp;
       <select name="urutan" id="idurutan">
@@ -38,7 +38,8 @@ if (isset($_SESSION['user'])) {
         <option value="5">Issue Date</option>
       </select>
       &nbsp;&nbsp;
-      <input type=BUTTON value="Display" name="mybtn" id="btn"></input>
+      <input type="submit" value="Display">
+     <!-- <input type=BUTTON value="Display" name="mybtn" id="btn"></input> -->
     </form>
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -81,14 +82,97 @@ if (isset($_SESSION['user'])) {
     const btn = document.getElementById('btn');
 
     getSupplier();
- 
-    btn.addEventListener('click', function() {
-    alert('Javascript Ajax code here');
-    const idsupp = document.getElementById('idsupp').value;
-    console.log(idsupp);
-});
       
     </script>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') 
+{
+  $supp = $_POST['supp'] ?? '';
+  $urutan = $_POST['urutan'] ?? '';
+  $env = parse_ini_file(__DIR__ . '/../config/.env');
+  $postkey = $env['POST_KEY'];
+  $url = $env['API_OB_URL'];
+
+  // Data yang dikirim
+  $data = [
+    'supp' => $supp,
+    'urutan' => $urutan,
+    'postkey'  => $postkey
+  ];
+  // Inisialisasi cURL
+  $ch = curl_init($url);
+  // Set opsi cURL
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // jika HTTPS dan belum ada sertifikat
+  $headers = [
+    'Content-Type: application/x-www-form-urlencoded' //,
+   // 'Content-Length: ' . strlen($postFields) // opsional, cURL biasanya menetapkan ini sendiri
+  ];
+  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+  // Eksekusi
+  $response = curl_exec($ch);
+  // Cek error
+  if (curl_errno($ch)) 
+  {
+    echo "Error: " . curl_error($ch);
+  } else 
+  {
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $data = json_decode($response, true);
+    if (is_array($data)) 
+    {
+      $replystatus = $data['status'];
+      if($replystatus === 'success')
+      {
+        echo '<table class="table table-hover">';
+        echo '<tr>';
+        echo '<th>NO</th>';
+        echo '<th>Part No</th>';
+        echo '<th>Part Name</th>';
+        echo '<th>Quantity</th>';
+        echo '<th>ReqDate</th>';
+        echo '<th>PO</th>';
+        echo '<th>SQ</th>';
+        echo '<th>BAL</th>';
+        echo '<th>SuppRest</th>';
+        echo '<th>Model</th>';
+        echo '<th>Issue Date</th>';
+        echo '<th>PO Type</th>';
+        echo '</tr>';
+        $no = 1;
+        foreach ($data['data'] as $item):
+          echo '<tr>';
+          echo '<td align="right">' . $no . '</td>';
+          echo '<td>' . htmlspecialchars($item['partno']) . '</td>';
+          echo '<td>' . htmlspecialchars($item['partname']) . '</td>';
+          echo '<td align="right">' . htmlspecialchars($item['qty']) . '</td>';
+          echo '<td>' . htmlspecialchars(substr($item['reqdate'],0,10)) . '</td>';
+          echo '<td>' . htmlspecialchars($item['po']) . '</td>';
+          echo '<td>' . htmlspecialchars($item['posq']) . '</td>';
+          echo '<td align="right">' . htmlspecialchars($item['ob']) . '</td>';
+          echo '<td align="right">' . htmlspecialchars($item['supprest']) . '</td>';
+          echo '<td>' . htmlspecialchars($item['model']) . '</td>';
+          echo '<td>' . htmlspecialchars(substr($item['issuedate'],0,10)) . '</td>';
+          echo '<td>' . htmlspecialchars($item['potype']) . '</td>';
+          $no = $no + 1;
+        endforeach; 
+        echo '</tr>';
+      } else 
+      {
+        echo "<br>Login gagal: " . $replystatus;
+      }
+    } else 
+    {
+      echo "Gagal decode JSON. Response: " . $response;
+    }
+      
+  }
+    // Tutup koneksi cURL
+    curl_close($ch);
+}
+?>
   </body>
   </html>
 <?php

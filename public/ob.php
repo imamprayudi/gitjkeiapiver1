@@ -159,6 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
           $no = $no + 1;
         endforeach; 
         echo '</tr>';
+        echo '</table>';
       } else 
       {
         echo "<br>Login gagal: " . $replystatus;

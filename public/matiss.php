@@ -47,13 +47,15 @@ if (isset($_SESSION['user'])) {
     let user = '';
     let level = '';
     let appkey = '';   
+    let urlsupp = '';
     try{
       fetch('getsession.php')
       .then(response => response.json())
       .then(data => {
         user = data.user;
         level = data.level;
-        appkey = data.appkey;  
+        appkey = data.appkey;
+        urlsupp = data.urlsupp;  
         getSupplier(user);
         getTanggal(user);
       })}
@@ -62,9 +64,8 @@ if (isset($_SESSION['user'])) {
     } 
       
     async function getSupplier(user){
-      const alamat = '<?=$suppurl?>';
       try {
-        const response = await fetch(alamat, {
+        const response = await fetch(urlsupp, {
           method: 'POST',
           credentials: "include",
           headers: {

@@ -123,6 +123,7 @@ if (isset($_SESSION['user'])) {
       {
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $data = json_decode($response, true);
+        // print_r($data);
         if (is_array($data)) 
         {
           $replystatus = $data['status'];
@@ -182,6 +183,75 @@ if (isset($_SESSION['user'])) {
               
             endforeach; 
             echo '</tr>';
+            $nomor = 1;
+            foreach ($data['data'] as $index => $item):
+              echo '<tr>';
+              echo '<td>' . $nomor . '</td>'; 
+              echo '<td>' . $item['partno'] . '<br>';
+              echo $item['partname'] . '<br>' . $item['leadtime'] . '</td>';
+              echo '<td>FIRM<br>FOREC<br>PLAN<br>TOTAL<br></td>';
+              echo '<td align="right">' . $item['a1'] . '<br>' . $item['b1']; 
+              echo '<br>' . $item['c1'] . '<br>' . $item['d1'] . '</td>';
+              echo '<td align="right">' . $item['a2'] . '<br>' . $item['b2']; 
+              echo '<br>' . $item['c2'] . '<br>' . $item['d2'] . '</td>';
+              echo '<td align="right">' . $item['a3'] . '<br>' . $item['b3'];
+              echo '<br>' . $item['c3'] . '<br>' . $item['d3'] . '</td>';
+              echo '<td align="right">' . $item['a4'] . '<br>' . $item['b4'];
+              echo '<br>' . $item['c4'] . '<br>' . $item['d4'] . '</td>';
+              echo '<td align="right">' . $item['a5'] . '<br>' . $item['b5'] ;
+              echo '<br>' . $item['c5'] . '<br>' . $item['d5'] . '</td>';
+              echo '<td align="right">' . $item['a6'] . '<br>' . $item['b6'] ;
+              echo '<br>' . $item['c6'] . '<br>' . $item['d6'] . '</td>';
+              echo '<td align="right">' . $item['a7'] . '<br>' . $item['b7'] ;
+              echo '<br>' . $item['c7'] . '<br>' . $item['d7'] . '</td>';
+              echo '<td align="right">' . $item['a8'] . '<br>' . $item['b8'] ;
+              echo '<br>' . $item['c8'] . '<br>' . $item['d8'] . '</td>';
+              echo '<td align="right">' . $item['a9'] . '<br>' . $item['b9'] ;
+              echo '<br>' . $item['c9'] . '<br>' . $item['d9'] . '</td>';
+              echo '<td align="right">' . $item['a10'] . '<br>' . $item['b10'] ;
+              echo '<br>' . $item['c10'] . '<br>' . $item['d10'] . '</td>';
+              echo '<td align="right">' . $item['a11'] . '<br>' . $item['b11'] ;
+              echo '<br>' . $item['c11'] . '<br>' . $item['d11'] . '</td>';
+              echo '<td align="right">' . $item['a12'] . '<br>' . $item['b12'] ;
+              echo '<br>' . $item['c12'] . '<br>' . $item['d12'] . '</td>';
+              echo '<td align="right">' . $item['a13'] . '<br>' . $item['b13'] ;
+              echo '<br>' . $item['c13'] . '<br>' . $item['d13'] . '</td>';
+              echo '<td align="right">' . $item['a14'] . '<br>' . $item['b14'] ;
+              echo '<br>' . $item['c14'] . '<br>' . $item['d14'] . '</td>';
+              echo '<td align="right">' . $item['a15'] . '<br>' . $item['b15'] ;
+              echo '<br>' . $item['c15'] . '<br>' . $item['d15'] . '</td>';
+              echo '<td align="right">' . $item['a16'] . '<br>' . $item['b16'] ;
+              echo '<br>' . $item['c16'] . '<br>' . $item['d16'] . '</td>';
+              echo '<td align="right">' . $item['a17'] . '<br>' . $item['b17'] ;
+              echo '<br>' . $item['c17'] . '<br>' . $item['d17'] . '</td>';
+              echo '<td align="right">' . $item['a18'] . '<br>' . $item['b18'] ;
+              echo '<br>' . $item['c18'] . '<br>' . $item['d18'] . '</td>';
+              echo '<td align="right">' . $item['a19'] . '<br>' . $item['b19'] ;
+              echo '<br>' . $item['c19'] . '<br>' . $item['d19'] . '</td>';
+              echo '<td align="right">' . $item['a20'] . '<br>' . $item['b20'] ;
+              echo '<br>' . $item['c20'] . '<br>' . $item['d20'] . '</td>';
+              echo '<td align="right">' . $item['a21'] . '<br>' . $item['b21'] ;
+              echo '<br>' . $item['c21'] . '<br>' . $item['d21'] . '</td>';
+              echo '<td align="right">' . $item['a22'] . '<br>' . $item['b22'] ;
+              echo '<br>' . $item['c22'] . '<br>' . $item['d22'] . '</td>';
+              echo '<td align="right">' . $item['a23'] . '<br>' . $item['b23'] ;
+              echo '<br>' . $item['c23'] . '<br>' . $item['d23'] . '</td>';
+              echo '<td align="right">' . $item['a24'] . '<br>' . $item['b24'] ;
+              echo '<br>' . $item['c24'] . '<br>' . $item['d24'] . '</td>';
+              echo '<td align="right">' . $item['a25'] . '<br>' . $item['b25'] ;
+              echo '<br>' . $item['c25'] . '<br>' . $item['d25'] . '</td>';
+              echo '<td align="right">' . $item['a26'] . '<br>' . $item['b26'] ;
+              echo '<br>' . $item['c26'] . '<br>' . $item['d26'] . '</td>';
+              echo '<td align="right">' . $item['a27'] . '<br>' . $item['b27'] ;
+              echo '<br>' . $item['c27'] . '<br>' . $item['d27'] . '</td>';
+              echo '<td align="right">' . $item['a28'] . '<br>' . $item['b28'] ;
+              echo '<br>' . $item['c28'] . '<br>' . $item['d28'] . '</td>';
+              
+
+              echo '</tr>';
+              $nomor = $nomor + 1;
+            endforeach;
+            
             echo '</table>';
           } else 
           {

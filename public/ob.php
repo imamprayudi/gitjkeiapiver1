@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
         foreach ($data['data'] as $item):
           echo '<tr>';
           echo '<td align="right">' . $no . '</td>';
-          echo '<td>' . htmlspecialchars($item['partno']) . '</td>';
+          echo '<td><pre>' . htmlspecialchars($item['partno']) . '</pre></td>';
           echo '<td>' . htmlspecialchars($item['partname']) . '</td>';
           echo '<td align="right">' . htmlspecialchars($item['qty']) . '</td>';
           echo '<td>' . htmlspecialchars(substr($item['reqdate'],0,10)) . '</td>';
@@ -170,8 +170,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     }
       
   }
-    // Tutup koneksi cURL
-    curl_close($ch);
+  // Tutup koneksi cURL
+  curl_close($ch);
 }
 ?>
   </body>

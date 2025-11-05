@@ -1,11 +1,24 @@
 <?php
+header("Access-Control-Allow-Origin: same-origin");
+header("Content-Type: application/json");
 // code ini berfungsi untuk mencegah panggil getsession.php langsung
-// tanpa dari fetch javascript, namun masih gagal, fetch javascript juga terblokir
-// if (!(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-//       strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')) {
+// dengan 2 cara, yaitu dengan API key atau dengan header X-Requested-With
+// $api_token = "ACCESS_KEY=BLNPTYndE1m7tJVTDqLHd7ZrTCRhRFfk";
+// if (!isset($_SERVER['HTTP_X_ACCESS_KEY']) || $_SERVER['HTTP_X_ACCESS_KEY'] !== $api_token) {
 //     http_response_code(403);
-//     exit('403 Forbidden');
+//     die("Forbidden");
+//     exit();
 // }
+// Cara kedua dengan header X-Requested-With
+if (
+    !isset($_SERVER['HTTP_X_REQUESTED_WITH']) ||
+    strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest'
+) {
+    http_response_code(403);
+    die("Forbidden Access");
+    exit();
+}
+
 // Fungsi untuk mendapatkan data session
 // dan mengembalikannya dalam format JSON
 // Programmer: Imam Prayudi
@@ -19,12 +32,16 @@ if (isset($_SESSION['user'])) {
   $appkey = $_SESSION['appkey'];
   $env = parse_ini_file(__DIR__ . '/../config/.env');
   $suppurl = $env['API_SUPP_URL'];
+  $tdstgl = $env['API_TDS_TGL_URL'];
+  $urltds = $env['API_TDS_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
     'level' => $level,
     'appkey' => $appkey,
-    'urlsupp' => $suppurl
+    'urlsupp' => $suppurl,
+    'urltdstgl' => $tdstgl,
+    'urltds' => $urltds
   );
   // Header JSON
   header('Content-Type: application/json');

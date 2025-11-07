@@ -172,12 +172,9 @@ async function getMatsum(supp,tgl)
     });
 
     const reply = await response.text(); // ambil balasan dari PHP
-    console.log('Reply: ' + reply);
     const isidata = JSON.parse(reply);  
-    console.log(isidata.data);
     const judul = isidata.header;
     const data = isidata.data;
-    console.log(data);
     const table = document.getElementById("dataTable");
     const thead = table.querySelector("thead");
     const tbody = table.querySelector("tbody");

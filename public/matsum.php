@@ -211,7 +211,8 @@ async function getMatsum(supp,tgl)
         {
           const td = document.createElement("td");
           td.textContent = item[key];
-            row.appendChild(td);
+          td.style.textAlign = "right";
+          row.appendChild(td);
         }
       });
       tbody.appendChild(row);

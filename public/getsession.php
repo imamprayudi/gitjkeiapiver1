@@ -23,7 +23,7 @@ if (
 // dan mengembalikannya dalam format JSON
 // Programmer: Imam Prayudi
 // Date Created : 2025-10-20
-// Date Updated : 2025-10-20
+// Date Updated : 2025-11-07
 //-----------------------------------------------
 session_start();
 if (isset($_SESSION['user'])) {
@@ -34,6 +34,10 @@ if (isset($_SESSION['user'])) {
   $suppurl = $env['API_SUPP_URL'];
   $tdstgl = $env['API_TDS_TGL_URL'];
   $urltds = $env['API_TDS_URL'];
+  $urlbsp = $env['API_BPS_URL'];
+  $urlbpstgl = $env['API_BPS_TGL_URL']; 
+  $urlmatsum = $env['API_MATSUM_URL'];
+  $urlmatsumtgl = $env['API_MATSUM_TGL_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
@@ -41,7 +45,11 @@ if (isset($_SESSION['user'])) {
     'appkey' => $appkey,
     'urlsupp' => $suppurl,
     'urltdstgl' => $tdstgl,
-    'urltds' => $urltds
+    'urltds' => $urltds,
+    'urlbps' => $urlbsp,
+    'urlbpstgl' => $urlbpstgl,
+    'urlmatsum' => $urlmatsum,
+    'urlmatsumtgl' => $urlmatsumtgl
   );
   // Header JSON
   header('Content-Type: application/json');

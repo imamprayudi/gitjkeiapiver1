@@ -34,9 +34,9 @@
   <h2>Login</h2>
   <div id="formlogin" class="login-card">
     <form>
-      <label>Username:</label><br>
+      <label for="userid">User ID</label><br>
       <input type="text" name="userid" id="userid" required><br><br>
-      <label>Password:</label><br>
+      <label for="password">Password</label><br>
       <input type="password" name="password" id="password" required><br><br>
       <button id="btn" type="submit">Login</button>
     </form>

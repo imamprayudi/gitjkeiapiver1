@@ -31,11 +31,13 @@ if (isset($_SESSION['user'])) {
   $level = $_SESSION['level'];
   $appkey = $_SESSION['appkey'];
   $env = parse_ini_file(__DIR__ . '/../config/.env');
+  $postkey = $env['POST_KEY'];
   $suppurl = $env['API_SUPP_URL'];
   $tdstgl = $env['API_TDS_TGL_URL'];
   $urltds = $env['API_TDS_URL'];
   $urlbsp = $env['API_BPS_URL'];
   $urlbpstgl = $env['API_BPS_TGL_URL']; 
+  $urlforecast = $env['API_FORECAST_URL'];
   $urlmatsum = $env['API_MATSUM_URL'];
   $urlmatsumtgl = $env['API_MATSUM_TGL_URL'];
   // Buat array respons JSON
@@ -43,11 +45,13 @@ if (isset($_SESSION['user'])) {
     'user' => $user,
     'level' => $level,
     'appkey' => $appkey,
+    'postkey' => $postkey,
     'urlsupp' => $suppurl,
     'urltdstgl' => $tdstgl,
     'urltds' => $urltds,
     'urlbps' => $urlbsp,
     'urlbpstgl' => $urlbpstgl,
+    'urlforecast' => $urlforecast,
     'urlmatsum' => $urlmatsum,
     'urlmatsumtgl' => $urlmatsumtgl
   );

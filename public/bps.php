@@ -152,8 +152,6 @@ async function getBps(supp,tgl)
 {
   let supplier = supp;
   let tanggal = tgl;
-  //console.log('Supplier: ' + supplier + ' Tanggal: ' + tanggal);
-  //console.log('URL TDS: ' + urltds);
   try 
   {
     const response = await fetch(urlbps, 
@@ -170,12 +168,9 @@ async function getBps(supp,tgl)
     });
 
     const reply = await response.text(); // ambil balasan dari PHP
-    //console.log('Reply: ' + reply);
     const isidata = JSON.parse(reply);  
-    //console.log(isidata.data);
     const judul = isidata.header;
     const data = isidata.data;
-    //console.log(data);
     const table = document.getElementById("dataTable");
     const thead = table.querySelector("thead");
     const tbody = table.querySelector("tbody");
@@ -242,7 +237,6 @@ async function getBps(supp,tgl)
 const btn = document.getElementById('btn');
 btn.addEventListener('click', function() 
 {
- //alert('Javascript Ajax code here');
   getBps(document.getElementById('idsupp').value,document.getElementById('idtanggal').value);
 });
     </script>

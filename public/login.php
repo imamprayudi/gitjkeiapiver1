@@ -95,7 +95,6 @@ async function getLogin(postkey,userid,password)
 
     const reply = await response.text(); // ambil balasan dari PHP
     const isidata = JSON.parse(reply);  
-    console.log(isidata);
     const status = isidata.status;
     if (status === 'success')
     {
@@ -140,7 +139,6 @@ async function createSession(userid,level,appkey)
     const reply = await response.text(); // ambil balasan dari PHP
     const isidata = JSON.parse(reply);  
     const status = isidata.status;
-    console.log('status reply dari makesession : ', status);
     if (status === 'success'){
       window.location.href = "dashboard.php";
     }

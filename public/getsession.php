@@ -38,6 +38,7 @@ if (isset($_SESSION['user'])) {
   $urlbsp = $env['API_BPS_URL'];
   $urlbpstgl = $env['API_BPS_TGL_URL']; 
   $urlforecast = $env['API_FORECAST_URL'];
+  $urlob = $env['API_OB_URL'];
   $urlmatsum = $env['API_MATSUM_URL'];
   $urlmatsumtgl = $env['API_MATSUM_TGL_URL'];
   // Buat array respons JSON
@@ -52,6 +53,7 @@ if (isset($_SESSION['user'])) {
     'urlbps' => $urlbsp,
     'urlbpstgl' => $urlbpstgl,
     'urlforecast' => $urlforecast,
+    'urlob' => $urlob,
     'urlmatsum' => $urlmatsum,
     'urlmatsumtgl' => $urlmatsumtgl
   );

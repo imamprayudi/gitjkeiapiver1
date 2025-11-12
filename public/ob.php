@@ -11,7 +11,7 @@ if (isset($_SESSION['user'])) {
     exit();
   }
 ?>
-  <html lang="en">
+<html lang="en">
   <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +27,7 @@ if (isset($_SESSION['user'])) {
     PT JVCKENWOOD ELECTRONICS INDONESIA<br />
     ORDER BALANCE <br /><br />
 
-    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">Supplier : &nbsp;&nbsp;
+    <form>Supplier : &nbsp;&nbsp;
       <select name="supp" id="idsupp">
       </select>&nbsp;&nbsp;Order By : &nbsp;&nbsp;
       <select name="urutan" id="idurutan">
@@ -39,146 +39,155 @@ if (isset($_SESSION['user'])) {
       </select>
       &nbsp;&nbsp;
       <input type="submit" value="Display">
-     <!-- <input type=BUTTON value="Display" name="mybtn" id="btn"></input> -->
     </form>
+    <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+ 
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script>
-      
-    async function getSupplier(){
-      const alamat = '<?=$suppurl?>';
-      const nama = '<?php echo $_SESSION['user']; ?>';
-      try {
-        const response = await fetch(alamat, {
-          method: 'POST',
-          credentials: "include",
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams({
-            nama: nama,
-          })
-        });
 
-        const reply = await response.text(); // ambil balasan dari PHP
-        const isidata = JSON.parse(reply);  
+<script>
 
-      const selectsupp = document.getElementById('idsupp');
-      console.log(selectsupp.value);
-        isidata.forEach((item, index) => {
-        const option = document.createElement('option');
-        option.value = item.kode;       // nilai option
-        option.textContent = item.nama + ' - ' + item.kode; // teks yang 
-        if (index === 0) {
-          option.selected = true;
-        }
-        selectsupp.appendChild(option);
-        });
-      
-    } catch (error) {
-        console.error(error);
-      }
-    }
-    const btn = document.getElementById('btn');
+let user = '';
+let level = '';
+let appkey = '';   
+let postkey = '';
+let urlsupp = '';
+let urlob = '';
 
-    getSupplier();
-      
-    </script>
-<?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') 
+fetch('getsession.php', 
 {
-  $supp = $_POST['supp'] ?? '';
-  $urutan = $_POST['urutan'] ?? '';
-  $env = parse_ini_file(__DIR__ . '/../config/.env');
-  $postkey = $env['POST_KEY'];
-  $url = $env['API_OB_URL'];
-
-  // Data yang dikirim
-  $data = [
-    'supp' => $supp,
-    'urutan' => $urutan,
-    'postkey'  => $postkey
-  ];
-  // Inisialisasi cURL
-  $ch = curl_init($url);
-  // Set opsi cURL
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_POST, true);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // jika HTTPS dan belum ada sertifikat
-  $headers = [
-    'Content-Type: application/x-www-form-urlencoded' //,
-   // 'Content-Length: ' . strlen($postFields) // opsional, cURL biasanya menetapkan ini sendiri
-  ];
-  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-  // Eksekusi
-  $response = curl_exec($ch);
-  // Cek error
-  if (curl_errno($ch)) 
+  method: 'GET',
+  headers: 
   {
-    echo "Error: " . curl_error($ch);
-  } else 
-  {
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $data = json_decode($response, true);
-    if (is_array($data)) 
-    {
-      $replystatus = $data['status'];
-      if($replystatus === 'success')
-      {
-        echo '<table class="table table-hover">';
-        echo '<tr>';
-        echo '<th>NO</th>';
-        echo '<th>Part No</th>';
-        echo '<th>Part Name</th>';
-        echo '<th>Quantity</th>';
-        echo '<th>ReqDate</th>';
-        echo '<th>PO</th>';
-        echo '<th>SQ</th>';
-        echo '<th>BAL</th>';
-        echo '<th>SuppRest</th>';
-        echo '<th>Model</th>';
-        echo '<th>Issue Date</th>';
-        echo '<th>PO Type</th>';
-        echo '</tr>';
-        $no = 1;
-        foreach ($data['data'] as $item):
-          echo '<tr>';
-          echo '<td align="right">' . $no . '</td>';
-          echo '<td><pre>' . htmlspecialchars($item['partno']) . '</pre></td>';
-          echo '<td>' . htmlspecialchars($item['partname']) . '</td>';
-          echo '<td align="right">' . htmlspecialchars($item['qty']) . '</td>';
-          echo '<td>' . htmlspecialchars(substr($item['reqdate'],0,10)) . '</td>';
-          echo '<td>' . htmlspecialchars($item['po']) . '</td>';
-          echo '<td>' . htmlspecialchars($item['posq']) . '</td>';
-          echo '<td align="right">' . htmlspecialchars($item['ob']) . '</td>';
-          echo '<td align="right">' . htmlspecialchars($item['supprest']) . '</td>';
-          echo '<td>' . htmlspecialchars($item['model']) . '</td>';
-          echo '<td>' . htmlspecialchars(substr($item['issuedate'],0,10)) . '</td>';
-          echo '<td>' . htmlspecialchars($item['potype']) . '</td>';
-          $no = $no + 1;
-        endforeach; 
-        echo '</tr>';
-        echo '</table>';
-      } else 
-      {
-        echo "<br>Login gagal: " . $replystatus;
-      }
-    } else 
-    {
-      echo "Gagal decode JSON. Response: " . $response;
-    }
-      
+  'X-Requested-With': 'XMLHttpRequest'
   }
-  // Tutup koneksi cURL
-  curl_close($ch);
+})
+.then(response => response.json())
+.then(data => 
+{
+  user = data.user;
+  level = data.level;
+  appkey = data.appkey;
+  postkey = data.postkey;
+  urlsupp = data.urlsupp;  
+  urlob = data.urlob;
+  getSupplier(user);
+}) 
+.catch(err => console.error(err));
+
+async function getSupplier(user)
+{
+  try 
+  {
+    const response = await fetch(urlsupp, 
+    {
+      method: 'POST',
+      credentials: "include",
+      headers: 
+      {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        nama: user,
+      })
+    });
+
+    const reply = await response.text(); // ambil balasan dari PHP
+    const isidata = JSON.parse(reply);  
+    const selectsupp = document.getElementById('idsupp');
+    isidata.forEach((item, index) => 
+    {
+      const option = document.createElement('option');
+      option.value = item.kode;       // nilai option
+      option.textContent = item.nama + ' - ' + item.kode; // teks yang 
+      if (index === 0) 
+      {
+        option.selected = true;
+      }
+      selectsupp.appendChild(option);
+    });
+      
+  } catch (error) 
+  {
+    console.error(error);
+  }
 }
-?>
-  </body>
+
+async function getOb(supp,urutan,post)
+{
+  let supplier = supp;
+  let urutannya = urutan;
+  let postkey = post;
+  try 
+  {
+    const response = await fetch(urlob, 
+    {
+      method: 'POST',
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        supp: supplier,
+        urutan: urutannya,
+        postkey: postkey
+      })
+    });
+    const reply = await response.text(); // ambil balasan dari PHP
+    const isidata = JSON.parse(reply);
+    const data = isidata.data;
+    const dataTable = document.getElementById('dataTable');
+    const thead = dataTable.querySelector('thead');
+    const tbody = dataTable.querySelector('tbody');
+    // Clear existing table data
+    thead.innerHTML = '';
+    tbody.innerHTML = '';
+    let judul = `<tr><th>NO</th><th>PARTNO</th><th>PART NAME</th>
+    <th>QUANTITY</th><th>ReqDate</th><th>PO</th><th>SQ</th> 
+    <th>BAL</th><th>SuppRest</th><th>MODEL</th>
+    <th>ISSUE DATE</th><th>PO Type</th></tr>`;
+    thead.innerHTML += judul;
+    let datarow = ``;
+    data.forEach((item, index) => 
+    {
+      datarow += `<tr>
+      <td align="right">${index + 1}</td>
+      <td><pre>${item.partno}</pre></td>
+      <td>${item.partname}</td>
+      <td align="right">${item.qty}</td>
+      <td>${item.reqdate.substring(0, 10)}</td>
+      <td>${item.po}</td>
+      <td>${item.posq}</td>
+      <td align="right">${item.ob}</td>
+      <td align="right">${item.supprest}</td>
+      <td>${item.model}</td>
+      <td>${item.issuedate.substring(0, 10)}</td>
+      <td>${item.potype}</td>
+      </tr>`;
+    });
+    tbody.innerHTML += datarow;
+  } catch (error)
+  {
+    console.error(error);
+  }
+}
+
+document.addEventListener('submit', function(e)
+{
+  e.preventDefault();
+  const suppid = document.getElementById('idsupp').value;
+  const urutan = document.getElementById('idurutan').value;
+  //alert(suppid + ' - ' + urutan);
+  getOb(suppid,urutan,postkey);
+});
+</script>
+    </body>
   </html>
 <?php
 } else {
   header("Location: index.php");
 }
 ?>
-

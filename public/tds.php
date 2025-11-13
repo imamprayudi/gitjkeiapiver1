@@ -29,10 +29,10 @@ if (isset($_SESSION['user'])) {
     TIME DELIVERY SCHEDULE<br /><br />
 
     <form action="">
-      Supplier : &nbsp;&nbsp;
+      <label for="idsupp">Supplier : </label>&nbsp;&nbsp;
       <select name="supp" id="idsupp">
       </select>&nbsp;&nbsp;
-      Transmission Date : &nbsp;&nbsp;
+      <label for="idtanggal">Transmission Date :</label>&nbsp;&nbsp;
       <select name="tanggal" id="idtanggal">
       </select>&nbsp;&nbsp;  
       <input type=BUTTON value="Display" name="mybtn" id="btn"></input>

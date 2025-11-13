@@ -1,6 +1,11 @@
 <?php
 header("Access-Control-Allow-Origin: same-origin");
-header("Content-Type: application/json");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: text/html; charset=utf-8");
+header("X-Content-Type-Options: nosniff");
 // code ini berfungsi untuk mencegah panggil getsession.php langsung
 // dengan 2 cara, yaitu dengan API key atau dengan header X-Requested-With
 // $api_token = "ACCESS_KEY=BLNPTYndE1m7tJVTDqLHd7ZrTCRhRFfk";
@@ -57,9 +62,6 @@ if (isset($_SESSION['user'])) {
     'urlmatsum' => $urlmatsum,
     'urlmatsumtgl' => $urlmatsumtgl
   );
-  // Header JSON
-  header('Content-Type: application/json');
-  // Kirim respons JSON
   echo json_encode($response);
 } else {
     $user = "";

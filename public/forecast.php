@@ -30,9 +30,11 @@ if (isset($_SESSION['user']))
     PT JVCKENWOOD ELECTRONICS INDONESIA<br />
     PART PURCHASE LONG FORECAST <br /><br />
 
-    <form>Supplier : 
+    <form>
+    <label for="idsupp">Supplier:</label>  
       <select name="supp" id="idsupp">
       </select>&nbsp;&nbsp;
+      <label for="idtipe">By :</label>
       <select name="tipe" id="idtipe">
         <option value="1">Weekly</option>
         <option value="2">Monthly</option>

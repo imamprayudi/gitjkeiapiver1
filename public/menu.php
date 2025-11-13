@@ -10,7 +10,7 @@
           <a class="nav-link active" aria-current="page" href="dashboard.php">Home</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkForecast" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Forecast
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -19,7 +19,7 @@
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkOrder" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Orders
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -29,7 +29,7 @@
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkSchedule" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Schedule
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -38,7 +38,7 @@
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkMat" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Material
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -48,7 +48,7 @@
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkSoa" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Statement of Account
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -58,7 +58,7 @@
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkDel" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Delivery
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">

@@ -1,6 +1,11 @@
 <?php
 header("Access-Control-Allow-Origin: same-origin");
-header("Content-Type: application/json");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: text/html; charset=utf-8");
+header("X-Content-Type-Options: nosniff");
 
 if (
     !isset($_SERVER['HTTP_X_REQUESTED_WITH']) ||
@@ -18,5 +23,4 @@ $response = array(
     'postkey' => $postkey,
     'loginurl' => $loginurl
   );
-header('Content-Type: application/json');
 echo json_encode($response);

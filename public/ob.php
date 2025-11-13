@@ -27,9 +27,11 @@ if (isset($_SESSION['user'])) {
     PT JVCKENWOOD ELECTRONICS INDONESIA<br />
     ORDER BALANCE <br /><br />
 
-    <form>Supplier : &nbsp;&nbsp;
+    <form>
+      <label for="idsupp">Supplier : </label>&nbsp;&nbsp;
       <select name="supp" id="idsupp">
-      </select>&nbsp;&nbsp;Order By : &nbsp;&nbsp;
+      </select>&nbsp;&nbsp;
+      <label for="idurutan">Order By :</label>&nbsp;&nbsp;
       <select name="urutan" id="idurutan">
         <option value="1">Part Number</option>
         <option value="2">Required Date</option>

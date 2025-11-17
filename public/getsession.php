@@ -47,6 +47,7 @@ if (isset($_SESSION['user'])) {
   $urlmatsum = $env['API_MATSUM_URL'];
   $urlmatsumtgl = $env['API_MATSUM_TGL_URL'];
   $urlmatiss = $env['API_MATISS_URL'];
+  $urlmatrec = $env['API_MATREC_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
@@ -62,7 +63,8 @@ if (isset($_SESSION['user'])) {
     'urlob' => $urlob,
     'urlmatsum' => $urlmatsum,
     'urlmatsumtgl' => $urlmatsumtgl,
-    'urlmatiss' => $urlmatiss
+    'urlmatiss' => $urlmatiss,
+    'urlmatrec' => $urlmatrec
   );
   echo json_encode($response);
 } else {

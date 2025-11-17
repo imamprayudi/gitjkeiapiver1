@@ -46,6 +46,7 @@ if (isset($_SESSION['user'])) {
   $urlob = $env['API_OB_URL'];
   $urlmatsum = $env['API_MATSUM_URL'];
   $urlmatsumtgl = $env['API_MATSUM_TGL_URL'];
+  $urlmatiss = $env['API_MATISS_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
@@ -60,7 +61,8 @@ if (isset($_SESSION['user'])) {
     'urlforecast' => $urlforecast,
     'urlob' => $urlob,
     'urlmatsum' => $urlmatsum,
-    'urlmatsumtgl' => $urlmatsumtgl
+    'urlmatsumtgl' => $urlmatsumtgl,
+    'urlmatiss' => $urlmatiss
   );
   echo json_encode($response);
 } else {

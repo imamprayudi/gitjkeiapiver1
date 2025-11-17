@@ -32,15 +32,16 @@ if (isset($_SESSION['user'])) {
       Supplier : &nbsp;&nbsp;
       <select name="supp" id="idsupp">
       </select>&nbsp;&nbsp;
-      Transmission Date : &nbsp;&nbsp;
-      <select name="tanggal" id="idtanggal">
-      </select>&nbsp;&nbsp;<br><br>
-      <label for="tglawal">DATE BETWEEN : </label>
+      <label for="idtglawal">DATE BETWEEN : </label>
       <input type="date" id="idtglawal" name="tglawal">&nbsp;&nbsp;
-      <label for="tglakhir">AND&nbsp;&nbsp;</label>
+      <label for="idtglakhir">AND&nbsp;&nbsp;</label>
       <input type="date" id="idtglakhir" name="tglakhir">&nbsp;&nbsp;
-      <input type=BUTTON value="Display" name="mybtn" id="btn"></input>
+      <input type="submit" value="Display">
     </form>
+    <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script>
@@ -48,13 +49,15 @@ let user = '';
 let level = '';
 let appkey = '';   
 let urlsupp = '';
-let urltdstgl = '';
+let urlmatiss = '';
     
-fetch('getsession.php', {
+fetch('getsession.php', 
+{
   method: 'GET',
-  headers: {
+  headers: 
+  {
   'X-Requested-With': 'XMLHttpRequest'
-}
+  }
 })
 .then(response => response.json())
 .then(data => 
@@ -63,9 +66,8 @@ fetch('getsession.php', {
   level = data.level;
   appkey = data.appkey;
   urlsupp = data.urlsupp;  
-  urltdstgl = data.urltdstgl;
+  urlmatiss = data.urlmatiss;
   getSupplier(user);
-  getTanggal(user);
 }) 
 .catch(err => console.error(err));
 
@@ -106,11 +108,14 @@ async function getSupplier(user)
   }
 }
 // ------------------------------------------------------------------------
-async function getTanggal(user)
+async function getMatiss(supp,tglawal,tglakhir)
 {
+  let supplier = supp;
+  let awal = tglawal;
+  let akhir = tglakhir;
   try 
   {
-    const response = await fetch(urltdstgl, 
+    const response = await fetch(urlmatiss, 
     {
       method: 'POST',
       credentials: "include",
@@ -118,34 +123,66 @@ async function getTanggal(user)
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        nama: user,
+        supp: supplier,
+        tglawal: awal,
+        tglakhir: akhir
       })
     });
-
+  
     const reply = await response.text(); // ambil balasan dari PHP
     const isidata = JSON.parse(reply);  
-    const selecttgl = document.getElementById('idtanggal');
-    isidata.forEach((item, index) => {
-    const option = document.createElement('option');
-    option.value = item.tanggal;       // nilai option
-    option.textContent = item.tanggal; // teks yang 
-    if (index === 0) {
-      option.selected = true;
-    }
-    selecttgl.appendChild(option);
-    });    
+    const data = isidata.data;
+    const table = document.getElementById("dataTable");
+    const thead = table.querySelector("thead");
+    const tbody = table.querySelector("tbody");
+    thead.innerHTML = "";
+    tbody.innerHTML = "";
+    let judul = `
+        <tr>
+            <th>NO</th>
+            <th>DATE</th>
+            <th>PARTNO</th>
+            <th>QTY</th>  
+        </tr>`;
+    thead.innerHTML += judul;
+    let datarow = ``;
+    data.forEach((item, index) => 
+    {
+      datarow += `<tr>
+      <td align="right">${index + 1}</td>
+      <td>${item.tgl.substring(0, 10)}</td>
+      <td><pre>${item.partno}</pre></td>
+      <td align="right">${item.qty * -1}</td>
+      </tr>`;
+    });
+    tbody.innerHTML += datarow;
   } catch (error) 
   {        
     console.error(error);
   }
+
 }
 // ------------------------------------------------------------------------
-
-const btn = document.getElementById('btn');
-btn.addEventListener('click', function() 
+document.addEventListener('submit', function(e)
 {
-  alert('Javascript Ajax code here');
-  const idsupp = document.getElementById('idsupp').value;
+  e.preventDefault();
+  const suppid = document.getElementById('idsupp').value;
+  const tglawal = document.getElementById('idtglawal').value;
+  const tglakhir = document.getElementById('idtglakhir').value;
+  if (!tglawal || !tglakhir) 
+  {
+    alert("Start date and end date must be filled in!");
+    return;
+  }
+  let awal = new Date(tglawal);
+  let akhir   = new Date(tglakhir);
+  if (awal > akhir) 
+  {
+    alert("The start date cannot be greater than the end date!");
+    return;
+  } 
+  getMatiss(suppid,tglawal,tglakhir);
+
 });
       
 </script>

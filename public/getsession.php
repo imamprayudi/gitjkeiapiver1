@@ -50,6 +50,7 @@ if (isset($_SESSION['user'])) {
   $urlmatrec = $env['API_MATREC_URL'];
   $urlsoa = $env['API_SOA_URL'];
   $urlsoatgl = $env['API_SOA_TGL_URL'];
+  $urlsoamid = $env['API_SOAMID_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
@@ -68,7 +69,8 @@ if (isset($_SESSION['user'])) {
     'urlmatiss' => $urlmatiss,
     'urlmatrec' => $urlmatrec,
     'urlsoa' => $urlsoa,
-    'urlsoatgl' => $urlsoatgl
+    'urlsoatgl' => $urlsoatgl,
+    'urlsoamid' => $urlsoamid
   );
   echo json_encode($response);
 } else {

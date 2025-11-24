@@ -202,14 +202,14 @@ async function getSoa(supp,tgl)
     sumtbody.innerHTML = "";
     let sumjudul = `
       <tr>
-          <th>LAST PAYMENT</th>
-          <th>PURCHASE</th>
-          <th>ROG-C</th>
-          <th>NET PURCHASE</th>  
-          <th>VAT</th>  
-          <th>DN CN (PUR)</th>  
-          <th>PAYMENT</th>
-          <th>THIS BALANCE</th>
+          <th style="text-align:right;">LAST PAYMENT</th>
+          <th style="text-align:right;">PURCHASE</th>
+          <th style="text-align:right;">ROG-C</th>
+          <th style="text-align:right;">NET PURCHASE</th>  
+          <th style="text-align:right;">VAT</th>  
+          <th style="text-align:right;">DN CN (PUR)</th>  
+          <th style="text-align:right;">PAYMENT</th>
+          <th style="text-align:right;">THIS BALANCE</th>
       </tr>`;
     sumthead.innerHTML += sumjudul;
     let judulrow = ``;
@@ -236,16 +236,17 @@ async function getSoa(supp,tgl)
     datatbody.innerHTML = "";
     let datajudul = `
         <tr>
-            <th>NO</th>
+            <th style="text-align:right;">NO</th>
+            <th>DATE</th>
             <th>PO NUMBER<br>SO NUMBER</th>
             <th>SQ</th>
             <th>INVOICE NUMBER<br>ROG SLIP NO</th>  
             <th>PART NUMBER</th>  
             <th>DESCRIPTION</th>  
-            <th>QTY</th>
-            <th>UNIT PRICE</th>
-            <th>AMOUNT</th>
-            <th>OUR DN CN</th>
+            <th style="text-align:right;">QTY</th>
+            <th style="text-align:right;">UNIT PRICE</th>
+            <th style="text-align:right;">AMOUNT</th>
+            <th style="text-align:right;">OUR DN CN</th>
         </tr>`;
     datathead.innerHTML += datajudul;
     let datarow = ``;
@@ -259,10 +260,11 @@ async function getSoa(supp,tgl)
       }
       datarow += `<tr>
       <td align="right">${nomor === 0 ? "" : nomor}</td>
+      <td>${item.tgl || ""}</td>
       <td align="center">${item.po || ""}</td>
       <td>${item.sq || ""}</td>
       <td>${item.invoice || ""}</td>
-      <td>${item.partno || ""}</td>
+      <td><pre>${item.partno || ""}</pre></td>
       <td>${item.partname || ""}</td>
       <td align="right">${item.qty || ""}</td>
       <td align="right">${item.price || ""}</td>

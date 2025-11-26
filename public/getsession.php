@@ -52,6 +52,9 @@ if (isset($_SESSION['user'])) {
   $urlsoatgl = $env['API_SOA_TGL_URL'];
   $urlsoamid = $env['API_SOAMID_URL'];
   $urlsoaend = $env['API_SOAEND_URL'];
+  $urlsoacom = $env['API_SOACOM_URL'];
+  $urlsoacommid = $env['API_SOACOMMID_URL'];
+  $urlsoacomend = $env['API_SOACOMEND_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
@@ -72,7 +75,10 @@ if (isset($_SESSION['user'])) {
     'urlsoa' => $urlsoa,
     'urlsoatgl' => $urlsoatgl,
     'urlsoamid' => $urlsoamid,
-    'urlsoaend' => $urlsoaend
+    'urlsoaend' => $urlsoaend,
+    'urlsoacom' => $urlsoacom,
+    'urlsoacommid' => $urlsoacommid,
+    'urlsoacomend' => $urlsoacomend
   );
   echo json_encode($response);
 } else {

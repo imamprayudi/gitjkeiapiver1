@@ -62,6 +62,9 @@ let appkey = '';
 let urlsupp = '';
 let urlsoatgl = '';
 let urlsoa = '';
+let urlsoacom = '';
+let gblBlnThn = '';
+let gblSuppId = '';
 
 document.getElementById("komentar").style.display = "none";
 
@@ -82,6 +85,7 @@ fetch('getsession.php',
   urlsupp = data.urlsupp;  
   urlsoatgl = data.urlsoatgl;
   urlsoa = data.urlsoa;
+  urlsoacom = data.urlsoacom;
   getSupplier(user);
   getTanggal(user);
 }) 
@@ -188,6 +192,8 @@ async function getSoa(supp,tgl)
     document.getElementById("komentar").style.display = "block";
     document.getElementById("txtMemo1").value = datacom[0].suppcom;
     document.getElementById("txtMemo2").value = datacom[0].jeincom;
+    gblBlnThn = datacom[0].blnthn;
+    gblSuppId = datacom[0].suppcode;
     if (level==="3")
     {
       document.getElementById("txtMemo2").disabled = true;
@@ -282,6 +288,35 @@ async function getSoa(supp,tgl)
 
 }
 
+async function postCom(blnthn,supp,suppkomen,jeinkomen)
+{
+  try 
+  {
+    const response = await fetch(urlsoacom, 
+    {
+      method: 'POST',
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        bulantahun : blnthn,
+        suppid : supp,
+        suppcom : suppkomen,
+        jeincom : jeinkomen
+      })
+    });
+     
+    const reply = await response.text(); // ambil balasan dari PHP
+    const isidata = JSON.parse(reply);
+    const status = isidata.status;
+    alert(status);
+  } catch (error) 
+  {        
+    console.error(error);
+  }
+}
+
 // ------------------------------------------------------------------------
 document.getElementById('frmdata').addEventListener('submit', function(e)
 {
@@ -291,24 +326,16 @@ document.getElementById('frmdata').addEventListener('submit', function(e)
   //alert('suppid : ' + suppid + ' tanggal : ' + tanggal);
   getSoa(suppid,tanggal);
 });
-      
 
+document.getElementById('frmkomentar').addEventListener('submit', function(e)
+{
+  e.preventDefault();
+  const suppKomen = document.getElementById("txtMemo1").value;
+  const jeinKomen = document.getElementById("txtMemo2").value;
+  alert(gblBlnThn + '-' + gblSuppId + '-' + suppKomen + '-' + jeinKomen);
+  postCom(gblBlnThn,gblSuppId,suppKomen,jeinKomen);
+});  
 // --------------------------------------------------------------------------
-// contoh submit dengan form lebih dari satu :
-// document.getElementById('formA').addEventListener('submit', function(e) {
-//     e.preventDefault();
-//     const suppid = document.getElementById('idsupp').value;
-//     console.log("Form A | suppid:", suppid);
-// });
-
-// document.getElementById('formB').addEventListener('submit', function(e) {
-//     e.preventDefault();
-//     const tanggal = document.getElementById('idtanggal').value;
-//     console.log("Form B | tanggal:", tanggal);
-// });
-
-// --------------------------------------------------------------------------
-
     </script>
   </body>
   </html>

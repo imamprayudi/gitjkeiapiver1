@@ -66,7 +66,10 @@ let level = '';
 let appkey = '';   
 let urlsupp = '';
 let urlsoatgl = '';
-let urlsoa = '';
+let urlsoamid = '';
+let urlsoacommid = '';
+let gblBlnThn = '';
+let gblSuppId = '';
 
 document.getElementById("komentar").style.display = "none";
 
@@ -87,6 +90,7 @@ fetch('getsession.php',
   urlsupp = data.urlsupp;  
   urlsoatgl = data.urlsoatgl;
   urlsoamid = data.urlsoamid;
+  urlsoacommid = data.urlsoacommid;
   getSupplier(user);
   getTanggal(user);
 }) 
@@ -184,7 +188,6 @@ async function getSoamid(supp,tgl)
     });
   
     const reply = await response.text(); // ambil balasan dari PHP
-    //console.log(reply);
     const isidata = JSON.parse(reply);  
     const status = isidata.status;
     const data = isidata.data;
@@ -193,6 +196,8 @@ async function getSoamid(supp,tgl)
     document.getElementById("komentar").style.display = "block";
     document.getElementById("txtMemo1").value = datacom[0].suppcom;
     document.getElementById("txtMemo2").value = datacom[0].jeincom;
+    gblBlnThn = datacom[0].blnthn;
+    gblSuppId = datacom[0].suppcode;
     if (level==="3")
     {
       document.getElementById("txtMemo2").disabled = true;
@@ -208,6 +213,8 @@ async function getSoamid(supp,tgl)
     const termTable = document.getElementById("termTable");
     const termthead = termTable.querySelector("thead");
     const termtbody = termTable.querySelector("tbody");
+    termthead.innerHTML = "";
+    termtbody.innerHTML = "";
     let sumjudul = `
       <tr>
       <th style="text-align:right;">LAST PAYMENT</th>
@@ -309,31 +316,52 @@ async function getSoamid(supp,tgl)
 
 }
 
+async function postCom(blnthn,supp,suppkomen,jeinkomen)
+{
+  try 
+  {
+    const response = await fetch(urlsoacommid, 
+    {
+      method: 'POST',
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        bulantahun : blnthn,
+        suppid : supp,
+        suppcom : suppkomen,
+        jeincom : jeinkomen
+      })
+    });
+     
+    const reply = await response.text(); // ambil balasan dari PHP
+    const isidata = JSON.parse(reply);
+    const status = isidata.status;
+    alert(status);
+  } catch (error) 
+  {        
+    console.error(error);
+  }
+}
+
 // ------------------------------------------------------------------------
 document.getElementById('frmdata').addEventListener('submit', function(e)
 {
   e.preventDefault();
   const suppid = document.getElementById('idsupp').value;
   const tanggal = document.getElementById('idtanggal').value;
-  //alert('suppid : ' + suppid + ' tanggal : ' + tanggal);
   getSoamid(suppid,tanggal);
 });
+
+document.getElementById('frmkomentar').addEventListener('submit', function(e)
+{
+  e.preventDefault();
+  const suppKomen = document.getElementById("txtMemo1").value;
+  const jeinKomen = document.getElementById("txtMemo2").value;
+  postCom(gblBlnThn,gblSuppId,suppKomen,jeinKomen);
+});  
       
-
-// --------------------------------------------------------------------------
-// contoh submit dengan form lebih dari satu :
-// document.getElementById('formA').addEventListener('submit', function(e) {
-//     e.preventDefault();
-//     const suppid = document.getElementById('idsupp').value;
-//     console.log("Form A | suppid:", suppid);
-// });
-
-// document.getElementById('formB').addEventListener('submit', function(e) {
-//     e.preventDefault();
-//     const tanggal = document.getElementById('idtanggal').value;
-//     console.log("Form B | tanggal:", tanggal);
-// });
-
 // --------------------------------------------------------------------------
 
     </script>

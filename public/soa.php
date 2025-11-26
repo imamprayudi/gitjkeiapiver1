@@ -323,7 +323,6 @@ document.getElementById('frmdata').addEventListener('submit', function(e)
   e.preventDefault();
   const suppid = document.getElementById('idsupp').value;
   const tanggal = document.getElementById('idtanggal').value;
-  //alert('suppid : ' + suppid + ' tanggal : ' + tanggal);
   getSoa(suppid,tanggal);
 });
 
@@ -332,7 +331,6 @@ document.getElementById('frmkomentar').addEventListener('submit', function(e)
   e.preventDefault();
   const suppKomen = document.getElementById("txtMemo1").value;
   const jeinKomen = document.getElementById("txtMemo2").value;
-  alert(gblBlnThn + '-' + gblSuppId + '-' + suppKomen + '-' + jeinKomen);
   postCom(gblBlnThn,gblSuppId,suppKomen,jeinKomen);
 });  
 // --------------------------------------------------------------------------

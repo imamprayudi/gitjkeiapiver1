@@ -38,94 +38,213 @@ if (isset($_SESSION['user'])) {
         <option value="2">Monthly</option>
       </select>
       &nbsp;&nbsp;
-      <input type=BUTTON value="Display" name="mybtn" id="btn"></input>
+      <input type="submit" value="Display">
     </form>
+    <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script>
-      
-    async function getSupplier(){
-      const alamat = '<?=$suppurl?>';
-      const namastr = '<?php echo $_SESSION['user']; ?>';
-      const nama = namastr.trim();
-      try {
-        const response = await fetch(alamat, {
-          method: 'POST',
-          credentials: "include",
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams({
-            nama: nama,
-          })
-        });
+let user = '';
+let level = '';
+let appkey = '';   
+let urlsupp = '';
+let urlforecasttgl = '';
+let urlforecast = '';
 
-        const reply = await response.text(); // ambil balasan dari PHP
-        const isidata = JSON.parse(reply);  
+fetch('getsession.php', 
+{
+  method: 'GET',
+  headers: 
+  {
+  'X-Requested-With': 'XMLHttpRequest'
+  }
+})
+.then(response => response.json())
+.then(data => 
+{
+  user = data.user;
+  level = data.level;
+  appkey = data.appkey;
+  postkey = data.postkey;
+  urlsupp = data.urlsupp;  
+  urlforecastarc = data.urlforecastarc;
+  urlforecasttgl = data.urlforecasttgl;
+  getSupplier(user);
+  getTanggal(user);
+}) 
+.catch(err => console.error(err));
 
-      const selectsupp = document.getElementById('idsupp');
-      console.log(selectsupp.value);
-        isidata.forEach((item, index) => {
-        const option = document.createElement('option');
-        option.value = item.kode;       // nilai option
-        option.textContent = item.nama + ' - ' + item.kode; // teks yang 
-        if (index === 0) {
-          option.selected = true;
-        }
-        selectsupp.appendChild(option);
-        });
-      
-    } catch (error) {
-        console.error(error);
+async function getSupplier(user)
+{
+  try 
+  {
+    const response = await fetch(urlsupp, 
+    {
+      method: 'POST',
+      credentials: "include",
+      headers: 
+      {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        nama: user,
+      })
+    });
+
+    const reply = await response.text(); // ambil balasan dari PHP
+    const isidata = JSON.parse(reply);  
+    const selectsupp = document.getElementById('idsupp');
+    isidata.forEach((item, index) => 
+    {
+      const option = document.createElement('option');
+      option.value = item.kode;       // nilai option
+      option.textContent = item.nama + ' - ' + item.kode; // teks yang 
+      if (index === 0) 
+      {
+        option.selected = true;
       }
-    }
-// ------------------------------------------------------------------------
-async function getTanggal(){
-const alamat = '<?=$forecasttglurl?>';
-      const namastr = '<?php echo $_SESSION['user']; ?>';
-      const nama = namastr.trim();
-      try {
-        const response = await fetch(alamat, {
-          method: 'POST',
-          credentials: "include",
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: new URLSearchParams({
-            nama: nama,
-          })
-        });
-
-        const reply = await response.text(); // ambil balasan dari PHP
-        const isidata = JSON.parse(reply);  
-        const selecttgl = document.getElementById('idtanggal');
-        isidata.forEach((item, index) => {
-        const option = document.createElement('option');
-        option.value = item.tanggal;       // nilai option
-        option.textContent = item.tanggal; // teks yang 
-        if (index === 0) {
-          option.selected = true;
-        }
-        selecttgl.appendChild(option);
-        });
+      selectsupp.appendChild(option);
+    });
       
-    } catch (error) {
-        console.error(error);
-      }
-    }
+  } catch (error) 
+  {
+    console.error(error);
+  }
+}
 // ------------------------------------------------------------------------
-    const btn = document.getElementById('btn');
+async function getTanggal(user)
+{
+  try 
+  {
+    const response = await fetch(urlforecasttgl, 
+    {
+      method: 'POST',
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        nama: user,
+      })
+    });
 
-    getSupplier();
-    getTanggal();
-    
-    btn.addEventListener('click', function() {
-    alert('Javascript Ajax code here');
-    const idsupp = document.getElementById('idsupp').value;
-    console.log(idsupp);
+    const reply = await response.text(); // ambil balasan dari PHP
+    const isidata = JSON.parse(reply);  
+    const selecttgl = document.getElementById('idtanggal');
+    isidata.forEach((item, index) => {
+    const option = document.createElement('option');
+    option.value = item.tanggal;       // nilai option
+    option.textContent = item.tanggal; // teks yang 
+    if (index === 0) {
+      option.selected = true;
+    }
+    selecttgl.appendChild(option);
+    });    
+  } catch (error) 
+  {        
+    console.error(error);
+  }
+}
+
+async function getForecast(supp,tipe,post,tgl)
+{
+  let supplier = supp;
+  let jenis = tipe;
+  let postkey = post;
+  let tanggal = tgl;
+  try 
+  {
+    const response = await fetch(urlforecastarc, 
+    {
+      method: 'POST',
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        supp: supplier,
+        tipe: jenis,
+        postkey: postkey,
+        tgl: tanggal
+      })
+    });
+    const reply = await response.text(); // ambil balasan dari PHP
+    const isidata = JSON.parse(reply);
+    const judul = isidata.judul;
+    const tipe = isidata.tipe;
+    const data = isidata.data;
+    const dataTable = document.getElementById('dataTable');
+    const thead = dataTable.querySelector('thead');
+    const tbody = dataTable.querySelector('tbody');
+    // Clear existing table data
+    thead.innerHTML = '';
+    tbody.innerHTML = '';
+    // Create table header
+    let judulrow = `
+    <tr>
+    <th>NO</th>
+    <th>PARTNO</th>
+    <th>DD/MM</th>
+    `;
+    judul.forEach((item, index) => 
+    {
+      if(tipe === 'WEEKLY') 
+      {
+        for (let i = 1; i <= 28; i++) 
+        {
+          judulrow += `<th>${item[i]}</th>`;
+        }
+      } else 
+      {
+        for (let i = 1; i <= 25; i++) 
+        {
+          judulrow += `<th>${item[i]}</th>`;
+        }
+      }
+    });
+    judulrow += `</tr>`;
+    thead.innerHTML += judulrow;
+
+    // Create table body
+    let datarow = ``;
+    data.forEach((item, index) => 
+    {
+      datarow += `<tr>`;
+      datarow += `<td align="right">${index + 1}</td>`;
+      datarow += `<td><pre>${item.partno}</pre><br>`;
+      datarow += `${item.partname}<br>`;
+      datarow += `${item.leadtime}</td>`;
+      datarow += `<td>FIRM<br>FOREC<br>PLAN<br>TOTAL</td>`;
+      for (let i = 1; i <= (tipe === 'WEEKLY' ? 28 : 25); i++) 
+      {
+        datarow += `<td align="right">${item[`a${i}`]}<br>${item[`b${i}`]}<br>${item[`c${i}`]}<br>${item[`d${i}`]}</td>`;
+      }
+
+        
+    });
+    datarow += `</tr>`;
+    tbody.innerHTML += datarow;
+
+  }catch (error) 
+  {
+    console.error(error);
+  }
+}
+
+// ------------------------------------------------------------------------
+    document.addEventListener('submit', function(e)
+{
+  e.preventDefault();
+  const suppid = document.getElementById('idsupp').value;
+  const tanggal = document.getElementById('idtanggal').value;
+  const tipe = document.getElementById('idtipe').value;
+  getForecast(suppid,tipe,postkey,tanggal);
 });
       
-    </script>
+</script>
   </body>
   </html>
 <?php

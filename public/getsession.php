@@ -43,6 +43,8 @@ if (isset($_SESSION['user'])) {
   $urlbsp = $env['API_BPS_URL'];
   $urlbpstgl = $env['API_BPS_TGL_URL']; 
   $urlforecast = $env['API_FORECAST_URL'];
+  $urlforecastarc = $env['API_FORECASTARC_URL'];
+  $urlforecasttgl = $env['API_FORECAST_TGL_URL'];
   $urlob = $env['API_OB_URL'];
   $urlmatsum = $env['API_MATSUM_URL'];
   $urlmatsumtgl = $env['API_MATSUM_TGL_URL'];
@@ -67,6 +69,8 @@ if (isset($_SESSION['user'])) {
     'urlbps' => $urlbsp,
     'urlbpstgl' => $urlbpstgl,
     'urlforecast' => $urlforecast,
+    'urlforecastarc' => $urlforecastarc,
+    'urlforecasttgl' => $urlforecasttgl,
     'urlob' => $urlob,
     'urlmatsum' => $urlmatsum,
     'urlmatsumtgl' => $urlmatsumtgl,

@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -95,6 +94,7 @@ async function getLogin(postkey,userid,password)
 
     const reply = await response.text(); // ambil balasan dari PHP
     const isidata = JSON.parse(reply);  
+    console.log(isidata);
     const status = isidata.status;
     if (status === 'success')
     {

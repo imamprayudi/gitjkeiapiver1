@@ -106,9 +106,10 @@ try {
     $transdate = substr($cek['transdate'],0,10);
     $bpstglbln = $cek['qty1'];
 
+    $bpsyear = substr($transdate,0,4);
     $bpstgl = substr($bpstglbln,0,2);
     $bpsbln = substr($bpstglbln,3,2);
-    $bpsdate = $bpsbln.$bpstgl;
+    $bpsdate = $bpsyear.$bpsbln.$bpstgl;
 
     echo "transdate : $transdate<br>";
     echo "bpsdate : $bpsdate<br>";

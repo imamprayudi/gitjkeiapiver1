@@ -22,7 +22,7 @@ $user = $env['DB_USER'];
 $pass = $env['DB_PASSWORD'];      
 $charset = "utf8mb4";
 
-$dsn = "mysql:host=$host;db=$db;charset=$charset";
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 
 $options = [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

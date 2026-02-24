@@ -6,6 +6,7 @@
 ** convert to PDO version
 */
 
+
 $env = parse_ini_file(__DIR__ . '/../config/.env');
 
 // ===== koneksi PDO =====
@@ -42,7 +43,7 @@ try {
     ");
 
     // ===== baca file =====
-    $txtFile = dirname(__DIR__) . "/uploads/PCK11WEB.txt";
+    $txtFile = dirname(__DIR__) . "/uploads/pck11web.txt";
     $fh = fopen($txtFile, 'r');
 
     while (($line = fgets($fh)) !== false) {

@@ -1,6 +1,5 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+
 
 header("Content-Type: application/json; charset=utf-8");
 
@@ -34,34 +33,34 @@ try {
     }
 
     $nama = trim($_POST['nama'] ?? '');
-
+    $nama = 'asahi';
     $sql = "
         SELECT 
-            Supplier.SuppName,
-            Supplier.SuppCode
-        FROM UserSupp
-        INNER JOIN Supplier 
-            ON UserSupp.SuppCode = Supplier.SuppCode
-        WHERE UserId = ?
-        AND Supplier.status = 'active'
-        ORDER BY SuppName
+            supplier.suppname,
+            supplier.suppcode
+        FROM usersupp
+        INNER JOIN supplier 
+            ON usersupp.suppcode = supplier.suppcode
+        WHERE userid = :nama
+        AND supplier.status = 'active'
+        ORDER BY suppname
     ";
 
     $stmt = $db->prepare($sql);
-    $stmt->execute([$nama]);
-
+    $stmt->execute(['nama' => $nama]);
     $rows = $stmt->fetchAll();
 
 $data = [];
 
 foreach ($rows as $row) {
     $data[] = [
-        'nama' => trim($row['SuppName']),
-        'kode' => trim($row['SuppCode'])
+        'nama' => trim($row['suppname']),
+        'kode' => trim($row['suppcode'])
     ];
 }
 
 echo json_encode($data);
+exit;
 } catch (Exception $e) {
 
     echo json_encode([

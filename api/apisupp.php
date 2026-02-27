@@ -33,7 +33,7 @@ try {
     }
 
     $nama = trim($_POST['nama'] ?? '');
-    $nama = 'asahi';
+    //$nama = 'asahi';
     $sql = "
         SELECT 
             supplier.suppname,

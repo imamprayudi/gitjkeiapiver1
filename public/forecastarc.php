@@ -182,6 +182,8 @@ async function getForecast(supp,tipe,post,tgl)
     // Clear existing table data
     thead.innerHTML = '';
     tbody.innerHTML = '';
+    let start = (tipe === 'WEEKLY') ? 1 : 29;
+    let end   = (tipe === 'WEEKLY') ? 28 : 53;
     // Create table header
     let judulrow = `
     <tr>
@@ -191,19 +193,24 @@ async function getForecast(supp,tipe,post,tgl)
     `;
     judul.forEach((item, index) => 
     {
-      if(tipe === 'WEEKLY') 
-      {
-        for (let i = 1; i <= 28; i++) 
-        {
-          judulrow += `<th>${item[i]}</th>`;
-        }
-      } else 
-      {
-        for (let i = 1; i <= 25; i++) 
-        {
-          judulrow += `<th>${item[i]}</th>`;
-        }
+      // if(tipe === 'WEEKLY') 
+      // {
+      //   for (let i = 1; i <= 28; i++) 
+      //   {
+      //     judulrow += `<th>${item[`dt1qt${i}`]}</th>`;
+      //   }
+      // } else 
+      // {
+      //   for (let i = 1; i <= 25; i++) 
+      //   {
+      //     //judulrow += `<th>${item[i]}</th>`;
+      //     judulrow += `<th>${item[`dt1qt${i}`]}</th>`;
+      //   }
+      // }
+      for (let i = start; i <= end; i++) {
+        judulrow += `<th>${item[`dt1qt${i}`] ?? ''}</th>`;
       }
+
     });
     judulrow += `</tr>`;
     thead.innerHTML += judulrow;
@@ -218,9 +225,13 @@ async function getForecast(supp,tipe,post,tgl)
       datarow += `${item.partname}<br>`;
       datarow += `${item.leadtime}</td>`;
       datarow += `<td>FIRM<br>FOREC<br>PLAN<br>TOTAL</td>`;
-      for (let i = 1; i <= (tipe === 'WEEKLY' ? 28 : 25); i++) 
+      for (let i = start; i <= end; i++) 
       {
-        datarow += `<td align="right">${item[`a${i}`]}<br>${item[`b${i}`]}<br>${item[`c${i}`]}<br>${item[`d${i}`]}</td>`;
+        datarow += `<td align="right">
+          ${item[`dt1qt${i}`]}<br>
+          ${item[`dt2qt${i}`]}<br>
+          ${item[`dt3qt${i}`]}<br>
+          ${item[`dt4qt${i}`]}</td>`;
       }
 
         

@@ -151,7 +151,9 @@ async function getTanggal(user)
     });
 
     const reply = await response.text(); // ambil balasan dari PHP
-    const isidata = JSON.parse(reply);  
+    const result = JSON.parse(reply);
+    if (result.status !== "success") return;
+    const isidata = result.data;
     const selecttgl = document.getElementById('idtanggal');
     isidata.forEach((item, index) => {
     const option = document.createElement('option');

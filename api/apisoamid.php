@@ -68,7 +68,9 @@ FROM soacommid
 WHERE blnthn=? AND suppcode=?
 ";
 
-
+function nf($v, $d = 2) {
+    return number_format((float)($v ?? 0), $d, '.', '');
+}
 /* =========================
    HEADER DATA (judul)
 ========================= */
@@ -84,22 +86,22 @@ if ($row) {
     $judul[] = [
         'blnthn'   => $row['blnthn'],
         'supp'     => $row['suppcode'],
-        'lastpay'  => number_format($row['lastpay'], 2, '.', ''),
-        'purchase' => number_format($row['purchase'], 2, '.', ''),
-        'dncn'     => number_format($row['dncns'], 2, '.', ''),
-        'netpur'   => number_format($row['netpur'], 2, '.', ''),
-        'vat'      => number_format($row['vat'], 2, '.', ''),
-        'salesvat' => number_format($row['salesvat'], 2, '.', ''),
-        'payment'  => number_format($row['payment'], 2, '.', ''),
-        'this'     => number_format($row['this'], 2, '.', ''),
-        'term15'   => number_format($row['term15'], 2, '.', ''),
-        'term30'   => number_format($row['term30'], 2, '.', ''),
-        'term45'   => number_format($row['term45'], 2, '.', ''),
-        'term60'   => number_format($row['term60'], 2, '.', ''),
-        'term75'   => number_format($row['term75'], 2, '.', ''),
-        'term90'   => number_format($row['term90'], 2, '.', ''),
-        'termtotal'=> number_format($row['termtotal'], 2, '.', '')
-    ];
+        'lastpay' => nf($row['lastpay']),
+        'purchase' => nf($row['purchase']),
+        'dncn' => nf($row['dncns']),
+        'netpur' => nf($row['netpur']),
+        'vat' => nf($row['vat']),
+        'salesvat' => nf($row['salesvat']),
+        'payment' => nf($row['payment']),
+        'this' => nf($row['this']),
+        'term15' => number_format($rsjudul->fields[10] ?? 0, 2, '.', ''),
+        'term30' => number_format($rsjudul->fields[11] ?? 0, 2, '.', ''),
+        'term45' => number_format($rsjudul->fields[12] ?? 0, 2, '.', ''),
+        'term60' => number_format($rsjudul->fields[13] ?? 0, 2, '.', ''),
+        'term75' => number_format($rsjudul->fields[14] ?? 0, 2, '.', ''),
+        'term90' => number_format($rsjudul->fields[15] ?? 0, 2, '.', ''),
+        'termtotal' => number_format($rsjudul->fields[16] ?? 0, 2, '.', ''),
+            ];
 
     $blnthn = $row['blnthn'];
 } else {

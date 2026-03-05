@@ -64,7 +64,7 @@
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <li><a class="dropdown-item" href="#">Delivery Instructions</a></li>
             <li><a class="dropdown-item" href="#">Standard Packing Maintenance</a></li>
-            <li><a class="dropdown-item" href="#">Print Barcode Label</a></li>
+            <li><a class="dropdown-item" href="barcodelist.php">Print Barcode Label</a></li>
           </ul>
         </li>
         <li class="nav-item">

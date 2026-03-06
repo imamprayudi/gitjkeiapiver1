@@ -8,34 +8,40 @@
 ** yang sudah kadaluarsa dari folder tertentu
 */
 
-$folders = ['image','injc','prin','stmp','wire'];
-$expire = 3600 * 24; // 1 hari
+date_default_timezone_set('Asia/Jakarta');
+set_time_limit(0);
 
+error_reporting(E_ALL);
+ini_set('display_errors',1);
+
+$folders = ['image','injc','prin','stmp','wire'];
+$expire = 3600 * 24;
 foreach ($folders as $folder) {
 
     $dir = __DIR__ . '/../printqr/' . $folder . '/';
 
-    if (!is_dir($dir)) {
-        echo "Folder tidak ditemukan: $dir <br>";
-        continue;
-    }
+    echo "Cek folder: $dir <br>";
 
     foreach (glob($dir . "*.jpg") as $file) {
+
+        echo "File: $file <br>";
+        echo "Modified: ".date("Y-m-d H:i:s", filemtime($file))."<br>";
+        echo "Selisih detik: ".(time() - filemtime($file))."<br>";
 
         if (time() - filemtime($file) > $expire) {
 
             if (unlink($file)) {
-              //  echo "Deleted: $file <br>";
+                echo "Deleted <br>";
             } else {
-                echo "Gagal delete: $file <br>";
+                echo "Gagal delete <br>";
             }
 
         }
 
+        echo "<br>";
+
     }
 
 }
-
-echo "Cleanup selesai";
 
 ?>

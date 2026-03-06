@@ -1,0 +1,2 @@
+>> New format file name
+nama file = suppcode . partno . po . (qty)

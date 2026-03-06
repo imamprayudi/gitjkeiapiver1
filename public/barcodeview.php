@@ -37,6 +37,8 @@ $po       = trim($_REQUEST['po'] ?? '');
 $qty      = (int)($_REQUEST['qty'] ?? 0);
 $deldate  = $_REQUEST['deldate'] ?? '';
 $proddate = $_REQUEST['proddate'] ?? '';
+$invoice  = $_REQUEST['invno'] ?? '';
+$et = $_REQUEST['et'] ?? '';
 
 
 /* =========================
@@ -97,7 +99,7 @@ $suppname2 = substr($suppname, 0, 7);
 <head>
     <title>JEIN - PRINT LABEL BARCODE VIEW</title>
 
-    <link href="../assets/css/styles.css" rel="stylesheet">
+   <!--  <link href="../assets/css/styles.css" rel="stylesheet"> -->
     <script src="../assets/js/jquery.js"></script>
 </head>
 
@@ -105,7 +107,7 @@ $suppname2 = substr($suppname, 0, 7);
 
 <div id="section">
 
-<img src="../assets/gambar/jvc.gif" style="width:220px;height:35px;">
+<img src="assets/gambar/jvc.gif" style="width:220px;height:35px;">
 <h3>PT.JVC ELECTRONICS INDONESIA</h3>
 <h4>PRINT LABEL BARCODE VIEW</h4>
 
@@ -121,6 +123,11 @@ $suppname2 = substr($suppname, 0, 7);
 <tr>
 <td>Part Number</td>
 <td><input type="text" value="<?= $partno ?>" readonly></td>
+</tr>
+
+<tr>
+<td>INVOICE</td>
+<td><input type="text" value="<?= $invoice ?>" readonly></td>
 </tr>
 
 <tr>
@@ -153,6 +160,11 @@ $suppname2 = substr($suppname, 0, 7);
 <td><input type="text" value="<?= $proddate ?>" readonly></td>
 </tr>
 
+<tr>
+<td>Elec Test</td>
+<td><input type="text" value="<?= $et ?>" readonly></td>
+</tr>
+
 </table>
 
 <br><br>
@@ -169,7 +181,7 @@ $suppname2 = substr($suppname, 0, 7);
 <b>QR Inner Box</b><br><br>
 
 <a target="_blank"
-href="barcodeqr/barcode_view_lama.php?
+href="barcodeqr/printinner.php?
 lokasi=<?= $lokasi ?>
 &partno=<?= $partno ?>
 &po=<?= $po ?>
@@ -180,10 +192,46 @@ lokasi=<?= $lokasi ?>
 &supp=<?= $vsupp ?>
 &qty=<?= $qty ?>
 &partnm=<?= $partnm ?>
+&deldate=<?= $deldate ?>
+&proddate=<?= $proddate ?>
+&et=<?= $et ?>
 &kategori=<?= $kategori ?>
+&bn=
+&invno=<?= $invoice ?>
 &stsinsp=<?= $sts_inspection ?>
 ">
-<img src="img/innerboxqr.png">
+<img src="assets/gambar/innerboxqr.png">
+</a>
+
+</td>
+
+</tr>
+<tr>
+
+<td align="center">
+<b>QR Outer Box</b><br><br>
+
+<a target="_blank"
+href="barcodeqr/printouter.php?
+lokasi=<?= $lokasi ?>
+&partno=<?= $partno ?>
+&po=<?= $po ?>
+&pack=<?= $pack ?>
+&qtystd=<?= $qtystd ?>
+&qtybal=<?= $qtybal ?>
+&suppname=<?= $suppname2 ?>
+&supp=<?= $vsupp ?>
+&qty=<?= $qty ?>
+&partnm=<?= $partnm ?>
+&deldate=<?= $deldate ?>
+&proddate=<?= $proddate ?>
+&et=<?= $et ?>
+&kategori=<?= $kategori ?>
+&bn=
+&invno=<?= $invoice ?>
+&stsinsp=<?= $sts_inspection ?>
+">
+<img src="assets/gambar/outerboxqr.png">
 </a>
 
 </td>

@@ -262,8 +262,31 @@ document.addEventListener('DOMContentLoaded',()=>{
   part.onchange = loadPO;
   po.onchange = loadQty;
   btnView.onclick = ()=>{
-    window.open('barcodeview.php');
-  }
+
+  const part      = document.getElementById('part').value;
+  const suppcode  = document.getElementById('suppname').value;
+  const suppname  = document.getElementById('suppname').selectedOptions[0].text;
+  const po        = document.getElementById('po').value;
+  const qty       = document.getElementById('qty').value;
+  const deldate   = document.getElementById('deldate').value;
+  const proddate  = document.getElementById('proddate').value;
+  const invno     = document.getElementById('invoice').value;
+  const et        = document.getElementById('elec').value;
+
+  const params = new URLSearchParams({
+    part: part,
+    suppname: suppname,
+    suppcode: suppcode,
+    po: po,
+    qty: qty,
+    deldate: deldate,
+    proddate: proddate,
+    invno: invno,
+    et: et
+  });
+
+  window.open("barcodeview.php?" + params.toString());
+}
 
 });
 </script>

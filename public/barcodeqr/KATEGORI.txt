@@ -1,0 +1,15 @@
+1 - Label Stamping Metal Part
+10733 HTP Metal
+10769 NIHON
+
+2 - Label Injection Part
+10700 Dinar
+10780 Polymatec
+
+3 - Label Printing Part
+10703 Chiyoda
+10775 Padam
+
+4 - Label Wire Part
+10693 Asahi
+10758 Kyosha

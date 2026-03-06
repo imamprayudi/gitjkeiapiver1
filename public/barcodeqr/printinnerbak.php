@@ -1,7 +1,7 @@
 <!--
-----	copy from 136.198.117.118/jeinwebdbn/barcode_view_lama.php
-----	on 6 Maret 2026
-----	
+----	create by Mohamad Yunus
+----	on 06 Feb 2017
+----	revise: -
 -->
 <html>
 <head>
@@ -14,6 +14,7 @@
 </table>
 <br><br>
 <?php
+	//include '../con_svrdbn.php';
 	date_default_timezone_set('Asia/Jakarta');
 
 	if(isset($_GET['partno']))

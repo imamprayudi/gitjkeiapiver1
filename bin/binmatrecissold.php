@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 try {
 
     // ======================
-    // LOAD ENV
+    // LOAD ENV + PDO
     // ======================
     $env = parse_ini_file(__DIR__ . '/../config/.env');
 
@@ -33,48 +33,65 @@ try {
     // ======================
     // DELETE TEMP
     // ======================
-    $pdo->exec("DELETE FROM sc01temp");
+    $pdo->exec("DELETE FROM vi07temp");
 
 
     // ======================
     // PREPARE INSERT (sekali saja)
     // ======================
     $stmt = $pdo->prepare("
-        INSERT INTO sc01temp
-        (period, whcode, loccode, partno, partname,
-         prevblncqty, recqty, shipqty, thisblncqty)
-        VALUES (?,?,?,?,?,?,?,?,?)
+        INSERT INTO vi07temp
+        (partno, tipe, tanggal, qty, po, suppcode, partname)
+        VALUES (?,?,?,?,?,?,?)
     ");
 
 
     // ======================
     // READ FILE
     // ======================
-    $file = dirname(__DIR__) . "/uploads/sc01.txt";
+    $file = dirname(__DIR__) . "/uploads/vi07.txt";
 
     if (!file_exists($file)) {
-        throw new Exception("File tidak ditemukan");
+        throw new Exception("File vi07.txt tidak ditemukan");
     }
 
     $fh = fopen($file, 'r');
 
     $rows = 0;
+    $tglthn = '';
+    $tglbln = '';
 
     while ($line = fgets($fh)) {
 
-        $data = [
-            substr($line,0,8),
-            substr($line,16,3),
-            substr($line,22,10),
-            trim(substr($line,44,20)),
-            trim(substr($line,82,20)),
-            trim(substr($line,152,13)),
-            trim(substr($line,166,13)),
-            trim(substr($line,180,13)),
-            trim(substr($line,194,13))
-        ];
+        set_time_limit(0);
 
-        $stmt->execute($data);
+        $partno   = trim(substr($line,0,15));
+        $tipe     = trim(substr($line,49,2));
+        $tgl      = trim(substr($line,55,10));
+        $qtystr   = trim(substr($line,66,13));
+        $po       = trim(substr($line,95,10));
+        $suppcode = trim(substr($line,146,10));
+        $partname = trim(substr($line,264,20));
+
+        // format tanggal
+        $tglthn = substr($tgl,0,4);
+        $tglbln = substr($tgl,4,2);
+        $tgltgl = substr($tgl,6,2);
+
+        $tanggal = "$tglthn-$tglbln-$tgltgl";
+
+        $qty = (int)$qtystr;
+
+        $stmt->execute([
+            $partno,
+            $tipe,
+            $tanggal,
+            $qty,
+            $po,
+            $suppcode,
+            $partname
+        ]);
+
         $rows++;
     }
 
@@ -82,29 +99,25 @@ try {
 
 
     // ======================
-    // PERIOD PROCESS
+    // DELETE PERIOD
+    // ======================
+    $period = "$tglthn-$tglbln";
+
+    $stmtDel = $pdo->prepare("
+        DELETE FROM vi07
+        WHERE tanggal LIKE ?
+    ");
+
+    $stmtDel->execute(["$period%"]);
+
+
+    // ======================
+    // COPY FINAL
     // ======================
     $pdo->exec("
-        DELETE FROM sc01period
-        WHERE period = (SELECT DISTINCT period FROM sc01temp)
-    ");
-
-    $pdo->exec("
-        INSERT INTO sc01period
-        SELECT DISTINCT period FROM sc01temp
-    ");
-
-    $pdo->exec("
-        DELETE FROM sc01
-        WHERE period = (SELECT DISTINCT period FROM sc01temp)
-    ");
-
-    $pdo->exec("
-        INSERT INTO sc01
-        (period, loccode, partno, partname, prevblncqty, recqty, shipqty, thisblncqty)
-        SELECT period, loccode, partno, partname, prevblncqty, recqty, shipqty, thisblncqty
-        FROM sc01temp
-        WHERE whcode = 'MC1'
+        INSERT INTO vi07(partno,tipe,tanggal,qty,po,suppcode,partname)
+        SELECT partno,tipe,tanggal,qty,po,suppcode,partname
+        FROM vi07temp
     ");
 
 
@@ -117,9 +130,7 @@ try {
     // ======================
     // DELETE FILE (optional)
     // ======================
-     if (file_exists($file)) {
-      unlink($file);
-    }
+    unlink($file);
 
 
     // ======================
@@ -128,7 +139,8 @@ try {
     echo json_encode([
         "status" => "success",
         "rows_inserted" => $rows,
-        "message" => "Import selesai"
+        "period_deleted" => $period,
+        "message" => "Import VI07 selesai"
     ]);
 
 } catch (Exception $e) {

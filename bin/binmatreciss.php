@@ -1,157 +1,115 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Content-Type: application/json; charset=utf-8");
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+// ======================
+// LOAD ENV + PDO
+// ======================
+$env = parse_ini_file(__DIR__ . '/../config/.env');
+
+$dsn = "mysql:host={$env['DB_HOST']};dbname={$env['DB_NAME']};charset=utf8mb4";
+
+$pdo = new PDO($dsn, $env['DB_USER'], $env['DB_PASSWORD'], [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+]);
+
+$file = dirname(__DIR__) . "/uploads/vi07.txt";
 
 try {
 
-    // ======================
-    // LOAD ENV + PDO
-    // ======================
-    $env = parse_ini_file(__DIR__ . '/../config/.env');
-
-    $dsn = "mysql:host={$env['DB_HOST']};dbname={$env['DB_NAME']};charset=utf8mb4";
-
-    $pdo = new PDO($dsn, $env['DB_USER'], $env['DB_PASSWORD'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
-
-
-    // ======================
-    // START TRANSACTION
-    // ======================
     $pdo->beginTransaction();
 
+    // ======================
+    // TRUNCATE TEMP TABLE
+    // ======================
+    $pdo->exec("TRUNCATE TABLE vi07temp");
 
     // ======================
-    // DELETE TEMP
+    // PREPARE INSERT TEMP
     // ======================
-    $pdo->exec("DELETE FROM vi07temp");
+    $sql = "INSERT INTO vi07temp
+    (partno, tipe, tanggal, qty, po, suppcode, partname)
+    VALUES
+    (:partno,:tipe,:tanggal,:qty,:po,:suppcode,:partname)";
 
+    $stmt = $pdo->prepare($sql);
 
-    // ======================
-    // PREPARE INSERT (sekali saja)
-    // ======================
-    $stmt = $pdo->prepare("
-        INSERT INTO vi07temp
-        (partno, tipe, tanggal, qty, po, suppcode, partname)
-        VALUES (?,?,?,?,?,?,?)
-    ");
+    $handle = fopen($file,"r");
 
+    $total = 0;
 
-    // ======================
-    // READ FILE
-    // ======================
-    $file = dirname(__DIR__) . "/uploads/vi07.txt";
+    while(($line = fgets($handle)) !== false)
+    {
+        $cols = explode(",", trim($line));
 
-    if (!file_exists($file)) {
-        throw new Exception("File vi07.txt tidak ditemukan");
-    }
-
-    $fh = fopen($file, 'r');
-
-    $rows = 0;
-    $tglthn = '';
-    $tglbln = '';
-
-    while ($line = fgets($fh)) {
-
-        set_time_limit(0);
-
-        $partno   = trim(substr($line,0,15));
-        $tipe     = trim(substr($line,49,2));
-        $tgl      = trim(substr($line,55,10));
-        $qtystr   = trim(substr($line,66,13));
-        $po       = trim(substr($line,95,10));
-        $suppcode = trim(substr($line,146,10));
-        $partname = trim(substr($line,264,20));
-
-        // format tanggal
-        $tglthn = substr($tgl,0,4);
-        $tglbln = substr($tgl,4,2);
-        $tgltgl = substr($tgl,6,2);
-
-        $tanggal = "$tglthn-$tglbln-$tgltgl";
-
-        $qty = (int)$qtystr;
+        if(count($cols) < 23) continue;
 
         $stmt->execute([
-            $partno,
-            $tipe,
-            $tanggal,
-            $qty,
-            $po,
-            $suppcode,
-            $partname
+            ':partno' => trim($cols[0]),
+            ':tipe' => trim($cols[2]),
+            ':tanggal' => trim($cols[4]),
+            ':qty' => trim($cols[5]),
+            ':po' => trim($cols[8]),
+            ':suppcode' => trim($cols[7]),
+            ':partname' => trim($cols[22])
         ]);
 
-        $rows++;
+        $total++;
     }
 
-    fclose($fh);
+    fclose($handle);
 
-
-    // ======================
-    // DELETE PERIOD
-    // ======================
-    $period = "$tglthn-$tglbln";
-
-    $stmtDel = $pdo->prepare("
-        DELETE FROM vi07
-        WHERE tanggal LIKE ?
-    ");
-
-    $stmtDel->execute(["$period%"]);
-
+    echo "Insert temp selesai: $total data\n";
 
     // ======================
-    // COPY FINAL
+    // DELETE DATA BULAN YANG SAMA DI TABLE FINAL
     // ======================
-    $pdo->exec("
-        INSERT INTO vi07(partno,tipe,tanggal,qty,po,suppcode,partname)
-        SELECT partno,tipe,tanggal,qty,po,suppcode,partname
+    $deleteSql = "
+    DELETE FROM vi07
+    WHERE DATE_FORMAT(tanggal,'%Y%m') IN (
+        SELECT DISTINCT DATE_FORMAT(STR_TO_DATE(tanggal,'%Y%m%d'),'%Y%m')
         FROM vi07temp
-    ");
+    )
+    ";
 
+    $pdo->exec($deleteSql);
 
-    // ======================
-    // COMMIT
-    // ======================
-    $pdo->commit();
-
+    echo "Delete bulan yang sama di vi07 selesai\n";
 
     // ======================
-    // DELETE FILE (optional)
+    // INSERT KE TABLE FINAL
     // ======================
-    unlink($file);
+    $sqlInsert = "
+    INSERT INTO vi07
+    (partno, tipe, tanggal, qty, po, suppcode, partname)
+    SELECT
+        TRIM(partno),
+        TRIM(tipe),
+        STR_TO_DATE(tanggal,'%Y%m%d'),
+        CAST(REPLACE(qty,'.000','') AS SIGNED),
+        TRIM(po),
+        SUBSTRING(TRIM(suppcode),2),
+        TRIM(partname)
+    FROM vi07temp
+    ";
 
+    $pdo->exec($sqlInsert);
 
-    // ======================
-    // RESPONSE JSON
-    // ======================
-    echo json_encode([
-        "status" => "success",
-        "rows_inserted" => $rows,
-        "period_deleted" => $period,
-        "message" => "Import VI07 selesai"
-    ]);
+    echo "Insert ke vi07 selesai\n";
 
-} catch (Exception $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->commit();
+    }
 
-    if (isset($pdo) && $pdo->inTransaction()) {
+     if (file_exists($file)) {
+      unlink($file);
+    }
+
+}
+catch(Exception $e)
+{
+    if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
 
-    echo json_encode([
-        "status" => "failed",
-        "message" => $e->getMessage()
-    ]);
+    echo "ERROR: " . $e->getMessage();
 }
-?>

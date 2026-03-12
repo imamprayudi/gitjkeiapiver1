@@ -4,9 +4,9 @@ $env = parse_ini_file(__DIR__ . '/../config/.env');
 
 // ===== koneksi PDO =====
 $host = $env['DB_HOST'];
-$db   = $env['DB_NAME'];     
-$user = $env['DB_USER'];    
-$pass = $env['DB_PASSWORD'];      
+$db   = $env['DB_NAME'];
+$user = $env['DB_USER'];
+$pass = $env['DB_PASSWORD'];
 $charset = "utf8mb4";
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -18,13 +18,19 @@ $options = [
 
 $pdo = new PDO($dsn, $user, $pass, $options);
 
+// ============================
+// 1. DELETE MAILPOCTODAY
+// ============================
+$pdo->exec("DELETE FROM mailpoctoday");
 
-// ===== file TXT =====
+// ============================
+// 2. IMPORT TXT KE MAILPOCTODAY
+// ============================
 $file = dirname(__DIR__) . "/uploads/mailpoctoday.txt";
 
 if (($handle = fopen($file, "r")) !== FALSE) {
 
-    $sql = "INSERT IGNORE INTO mailpoc
+    $sql = "INSERT INTO mailpoctoday
     (idno,rdate,rtime,supplier,suppliername,actioncode,pono,partno,partname,newqty,newdate,oldqty,olddate,price,model,potype,altno)
     VALUES
     (:idno,:rdate,:rtime,:supplier,:suppliername,:actioncode,:pono,:partno,:partname,:newqty,:newdate,:oldqty,:olddate,:price,:model,:potype,:altno)";
@@ -54,9 +60,43 @@ if (($handle = fopen($file, "r")) !== FALSE) {
         ]);
     }
 
-     if (file_exists($file)) {
-      unlink($file);
-    }
+    fclose($handle);
+}
+
+// ============================ 
+// 3. UPDATE STATUS 
+// ============================ 
+
+$pdo->exec(" UPDATE mailpoctoday 
+SET status = CASE 
+WHEN newqty = 0 THEN 'CANCELED' 
+WHEN newqty < oldqty THEN 'PO DOWN' 
+WHEN newqty > oldqty THEN 'PO UP'
+WHEN newqty = oldqty AND newdate < olddate THEN 'ADVANCED' 
+WHEN newqty = oldqty AND newdate > olddate THEN 'DELAYED' 
+ELSE 'NO CHANGE' END ");
+
+// ============================
+// 3. INSERT MAILPOCTODAY → MAILPOC
+// ============================
+$sqlInsert = "
+INSERT IGNORE INTO mailpoc
+(idno,rdate,rtime,supplier,suppliername,actioncode,pono,partno,partname,newqty,newdate,oldqty,olddate,price,model,potype,altno,status)
+SELECT
+idno,rdate,rtime,supplier,suppliername,actioncode,pono,partno,partname,newqty,newdate,oldqty,olddate,price,model,potype,altno,status
+FROM mailpoctoday
+";
+
+$pdo->exec($sqlInsert);
+
+// ============================
+// 4. HAPUS FILE TXT
+// ============================
+if (file_exists($file)) {
+    unlink($file);
 }
 
 echo "Import mailpoctoday selesai";
+
+?>
+

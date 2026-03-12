@@ -4,9 +4,9 @@ $env = parse_ini_file(__DIR__ . '/../config/.env');
 
 // ===== koneksi PDO =====
 $host = $env['DB_HOST'];
-$db   = $env['DB_NAME'];     
-$user = $env['DB_USER'];    
-$pass = $env['DB_PASSWORD'];      
+$db   = $env['DB_NAME'];
+$user = $env['DB_USER'];
+$pass = $env['DB_PASSWORD'];
 $charset = "utf8mb4";
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -18,13 +18,19 @@ $options = [
 
 $pdo = new PDO($dsn, $user, $pass, $options);
 
+// ===============================
+// 1. DELETE DATA MAILPOTODAY
+// ===============================
+$pdo->exec("DELETE FROM mailpotoday");
 
-// ===== file TXT =====
+// ===============================
+// 2. IMPORT TXT KE MAILPOTODAY
+// ===============================
 $file = dirname(__DIR__) . "/uploads/mailpotoday.txt";
 
 if (($handle = fopen($file, "r")) !== FALSE) {
 
-    $sql = "INSERT IGNORE INTO mailpo
+    $sql = "INSERT INTO mailpotoday
     (idno,rdate,rtime,supplier,suppliername,actioncode,pono,partno,partname,newqty,newdate,price,model,potype)
     VALUES
     (:idno,:rdate,:rtime,:supplier,:suppliername,:actioncode,:pono,:partno,:partname,:newqty,:newdate,:price,:model,:potype)";
@@ -51,9 +57,29 @@ if (($handle = fopen($file, "r")) !== FALSE) {
         ]);
     }
 
-    if (file_exists($file)) {
-      unlink($file);
-    }
+    fclose($handle);
+}
+
+// ===============================
+// 3. INSERT MAILPOTODAY -> MAILPO
+// ===============================
+$sqlInsert = "
+INSERT IGNORE INTO mailpo
+(idno,rdate,rtime,supplier,suppliername,actioncode,pono,partno,partname,newqty,newdate,price,model,potype)
+SELECT
+idno,rdate,rtime,supplier,suppliername,actioncode,pono,partno,partname,newqty,newdate,price,model,potype
+FROM mailpotoday
+";
+
+$pdo->exec($sqlInsert);
+
+// ===============================
+// 4. HAPUS FILE TXT
+// ===============================
+if (file_exists($file)) {
+    unlink($file);
 }
 
 echo "Import mailpotoday selesai";
+
+?>

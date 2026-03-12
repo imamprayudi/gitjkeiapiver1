@@ -57,6 +57,10 @@ if (isset($_SESSION['user'])) {
   $urlsoacom = $env['API_SOACOM_URL'];
   $urlsoacommid = $env['API_SOACOMMID_URL'];
   $urlsoacomend = $env['API_SOACOMEND_URL'];
+  $urlmailpotgl = $env['API_MAILPO_TGL_URL'];
+  $urlmailpodtl = $env['API_MAILPO_DTL_URL'];
+  $urlmailpoctgl = $env['API_MAILPOC_TGL_URL'];
+  $urlmailpocdtl = $env['API_MAILPOC_DTL_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
@@ -82,7 +86,11 @@ if (isset($_SESSION['user'])) {
     'urlsoaend' => $urlsoaend,
     'urlsoacom' => $urlsoacom,
     'urlsoacommid' => $urlsoacommid,
-    'urlsoacomend' => $urlsoacomend
+    'urlsoacomend' => $urlsoacomend,
+    'urlmailpotgl' => $urlmailpotgl,
+    'urlmailpodtl' => $urlmailpodtl,
+    'urlmailpoctgl' => $urlmailpoctgl,
+    'urlmailpocdtl' => $urlmailpocdtl
   );
   echo json_encode($response);
 } else {

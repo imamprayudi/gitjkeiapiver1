@@ -37,8 +37,8 @@ if (isset($_SESSION['user'])) {
       </select>&nbsp;&nbsp;  
       <input type=BUTTON value="Display" name="mybtn" id="btn"></input>
     </form>
-    <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
-      <thead></thead>
+    <table id="dataTable" border="1" cellpadding="5" class="table table-bordered table-striped">
+      <thead class="table-dark"></thead>
       <tbody></tbody>
     </table>
 

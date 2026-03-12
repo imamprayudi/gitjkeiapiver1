@@ -23,8 +23,8 @@
             Orders
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="po.php">Purchase Order</a></li>
-            <li><a class="dropdown-item" href="poc.php">Purchase Order Change</a></li>
+            <li><a class="dropdown-item" href="mailpotgl.php">Purchase Order</a></li>
+            <li><a class="dropdown-item" href="mailpoctgl.php">Purchase Order Change</a></li>
             <li><a class="dropdown-item" href="ob.php">Order Balance</a></li>
           </ul>
         </li>

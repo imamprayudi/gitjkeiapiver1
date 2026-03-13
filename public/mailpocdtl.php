@@ -13,8 +13,6 @@ if (isset($_SESSION['user'])) {
     exit();
   }
 
-echo "level : " . $level . "<br>";
-
 $p = $_GET['p'] ?? '';
 
 $query = base64_decode(urldecode($p));
@@ -83,13 +81,21 @@ PURCHASE ORDER CHANGE DETAIL<br><br>
 
 <label><b>REASON :</b></label>
 
+<div class="d-flex align-items-center gap-2 mb-4">
+
 <input type="text"
 id="suppreason"
 class="form-control"
-style="width:400px;display:inline-block;"
+style="width:400px;"
 placeholder="INPUT REASON IF REJECTED">
 
-<button class="btn btn-primary" onclick="updateStatus()">UPDATE</button>
+<button class="btn btn-primary" onclick="updateStatus()">
+UPDATE
+</button>
+
+<button class="btn btn-success" onclick="downloadTable()">
+Download Excel
+</button>
 
 </div>
 
@@ -396,6 +402,49 @@ document.getElementById("suppstatus").addEventListener("change", function()
   }
 
 });
+
+
+function downloadTable()
+{
+
+  const table = document.getElementById("poTable");
+  let csv = [];
+
+  for (let i = 0; i < table.rows.length; i++)
+  {
+
+    let row = [];
+    let cols = table.rows[i].querySelectorAll("th, td");
+
+    for (let j = 0; j < cols.length; j++)
+    {
+
+      // skip kolom checkbox
+      if(j === 0) continue;
+
+      let text = cols[j].innerText.replace(/\n/g," ").trim();
+      row.push('"' + text + '"');
+
+    }
+
+    csv.push(row.join(","));
+
+  }
+
+  const csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+
+  const downloadLink = document.createElement("a");
+
+  downloadLink.download = "poc.csv";
+  downloadLink.href = window.URL.createObjectURL(csvFile);
+
+  downloadLink.style.display = "none";
+
+  document.body.appendChild(downloadLink);
+
+  downloadLink.click();
+
+}
 
 
 

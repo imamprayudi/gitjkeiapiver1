@@ -143,7 +143,6 @@ async function getMailpo(supp,tglawal,tglakhir)
       <th>NO</th>
       <th>TRANSMISSION DATE</th>
       <th>VIEW DETAIL</th>
-      <th>DOWNLOAD</th>
     </tr>`;
 
     let datarow = '';
@@ -163,9 +162,6 @@ async function getMailpo(supp,tglawal,tglakhir)
           target="_blank">
           VIEW
           </a>
-        </td>
-        <td>
-          <button class="btn btn-sm btn-success">DOWNLOAD</button>
         </td>
       </tr>`;
     });

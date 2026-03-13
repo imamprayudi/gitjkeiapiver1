@@ -1,5 +1,7 @@
-<!DOCTYPE html>
+
 <?php
+require_once "security.php";
+
 session_start();
 if (isset($_SESSION['user'])) {
   $appkey = $_SESSION['appkey'];
@@ -11,6 +13,7 @@ if (isset($_SESSION['user'])) {
   }
   
 ?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">

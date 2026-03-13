@@ -11,8 +11,8 @@ header_remove("X-Powered-By");
    SECURITY HEADERS
 ================================ */
 
-header("X-Frame-Options: SAMEORIGIN"); // anti clickjacking
-header("X-Content-Type-Options: nosniff"); // anti content sniffing
+header("X-Frame-Options: SAMEORIGIN"); // Anti Clickjacking
+header("X-Content-Type-Options: nosniff"); // Prevent MIME sniffing
 header("X-XSS-Protection: 1; mode=block"); // XSS protection
 header("Referrer-Policy: strict-origin-when-cross-origin");
 
@@ -23,6 +23,16 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
 
 header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; object-src 'none'; frame-ancestors 'self';");
 
+
+/* ================================
+   HTTPS SECURITY (HSTS)
+================================ */
+
+if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+    header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
+}
+
+
 /* ================================
    SESSION SECURITY
 ================================ */
@@ -30,18 +40,20 @@ header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; scrip
 ini_set('session.use_only_cookies', 1);
 ini_set('session.cookie_httponly', 1);
 
-// aktifkan jika website sudah HTTPS
-ini_set('session.cookie_secure', 1);
+// hanya aktif jika HTTPS
+if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+    ini_set('session.cookie_secure', 1);
+}
 
 
 /* ================================
    ADDITIONAL HARDENING
 ================================ */
 
-// Disable file execution in upload folder if needed
-// header("X-Download-Options: noopen");
-
-// MIME protection
+// MIME policy
 header("X-Permitted-Cross-Domain-Policies: none");
+
+// Optional download protection
+// header("X-Download-Options: noopen");
 
 ?>

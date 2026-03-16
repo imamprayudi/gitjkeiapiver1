@@ -61,6 +61,22 @@ $supp  = $params['supp'] ?? '';
   background-color:#fff3cd !important;
 }
 
+.table-container{
+  max-height:600px;
+  overflow:auto;
+  border:1px solid #ddd;
+}
+
+/* FREEZE HEADER */
+#poTable thead th{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background:#212529; /* warna bootstrap table-dark */
+  color:white;
+  white-space:nowrap;
+}
+
 </style>
 
 </head>
@@ -111,6 +127,7 @@ Download Excel
 </div>
 
 
+<div class="table-container">
 <table class="table table-bordered table-striped" id="poTable">
 
 <thead class="table-dark">
@@ -148,7 +165,7 @@ Download Excel
 <tbody></tbody>
 
 </table>
-
+</div>
 </div>
 
 <script>

@@ -11,7 +11,7 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
 
 /* CONTENT SECURITY POLICY */
 
-header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; object-src 'none'; frame-ancestors 'self';");
+header("Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net http://localhost https:; font-src 'self' https://cdn.jsdelivr.net; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self';");
 
 /* HTTPS SECURITY */
 

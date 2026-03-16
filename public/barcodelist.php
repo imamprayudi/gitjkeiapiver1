@@ -1,7 +1,8 @@
 <?php
+require_once "security.php";
 session_start();
 
-if (empty($_SESSION['user'])) {
+if (!isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
 }

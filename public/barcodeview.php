@@ -3,7 +3,7 @@
     Created by Imam Prayudi
     Rev: PDO version (replace ADOdb)
 */
-
+require_once "security.php";
 session_start();
 
 if (!isset($_SESSION['user'])) {

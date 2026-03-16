@@ -1,7 +1,12 @@
-<!DOCTYPE html>
 <?php
+require_once "security.php";
 session_start();
-if (isset($_SESSION['user'])) {
+
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+}
+
   $appkey = $_SESSION['appkey'];
   $env = parse_ini_file(__DIR__ . '/../config/.env');
   $suppurl = $env['API_SUPP_URL'];
@@ -12,6 +17,7 @@ if (isset($_SESSION['user'])) {
     exit();
   }
 ?>
+<!DOCTYPE html>
   <html lang="en">
   <head>
   <meta charset="UTF-8">
@@ -260,9 +266,5 @@ btn.addEventListener('click', function()
     </script>
   </body>
   </html>
-<?php
-} else {
-  header("Location: index.php");
-}
-?>
+
 

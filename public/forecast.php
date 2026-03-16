@@ -1,19 +1,25 @@
-<!DOCTYPE html>
 <?php
+require_once "security.php";
 session_start();
-if (isset($_SESSION['user'])) 
-{
-  $appkey = $_SESSION['appkey'];
-  $env = parse_ini_file(__DIR__ . '/../config/.env');
-  $suppurl = $env['API_SUPP_URL'];
-  $forecasturl = $env['API_FORECAST_URL'];
-  $envappkey = $env['APP_KEY'];
-  if ($appkey !== $envappkey) {
+
+if (!isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
-  }
+}
 
+$appkey = $_SESSION['appkey'];
+
+$env = parse_ini_file(__DIR__ . '/../config/.env');
+$suppurl = $env['API_SUPP_URL'];
+$forecasturl = $env['API_FORECAST_URL'];
+$envappkey = $env['APP_KEY'];
+
+if ($appkey !== $envappkey) {
+    header("Location: login.php");
+    exit();
+}
 ?>
+<!DOCTYPE html>
 <html lang="en">
   <head>
   <meta charset="UTF-8">
@@ -207,9 +213,3 @@ document.addEventListener('submit', function(e)
 </script>
   </body>
   </html>
-<?php
-}else 
-{
-  header("Location: index.php");
-}
-?>

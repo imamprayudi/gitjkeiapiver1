@@ -25,29 +25,203 @@ if (!isset($_SESSION['user'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <title>Time Delivery</title>
   <link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+    font-family: 'Inter', sans-serif;
+    background:#f4f6f9;
+}
+
+.container-box{
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+.title-area{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.title-text{
+    font-weight:600;
+    font-size:18px;
+    line-height:1.4;
+}
+
+/* FORM */
+.filter-box{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:20px;
+}
+
+.filter-box label{
+    font-weight:500;
+}
+
+select{
+    border-radius:6px;
+    padding:5px 8px;
+}
+
+button{
+    background:#0d6efd;
+    border:none;
+    padding:6px 16px;
+    color:white;
+    border-radius:6px;
+}
+
+button:hover{
+    background:#0b5ed7;
+}
+
+/* TABLE */
+
+.table{
+    font-size:13px;
+}
+
+thead th{
+    position:sticky;
+    top:0;
+    background:#1f2937 !important;
+    color:white;
+    text-align:center;
+    vertical-align:middle;
+}
+
+tbody tr:hover{
+    background:#f1f5f9;
+}
+
+td{
+    white-space:nowrap;
+}
+
+td:first-child{
+    text-align:center;
+}
+
+.table-container{
+    max-height:600px;
+    overflow:auto;
+    border:1px solid #ddd;
+}
+
+/* HEADER FREEZE */
+#dataTable thead th{
+    position: sticky;
+    top: 0;
+    background:#1f2937;
+    color:white;
+    z-index:3;
+    text-align:center;
+    white-space:nowrap;
+}
+
+/* FREEZE COLUMN NO */
+#dataTable th:nth-child(1),
+#dataTable td:nth-child(1){
+    position: sticky;
+    left: 0;
+    background:white;
+    z-index:2;
+    text-align:center;
+    min-width:60px;
+}
+
+/* FREEZE COLUMN PARTNO */
+#dataTable th:nth-child(2),
+#dataTable td:nth-child(2){
+    position: sticky;
+    left:60px;
+    background:white;
+    z-index:2;
+    min-width:220px;
+}
+
+/* HEADER UNTUK KEDUA KOLOM */
+#dataTable thead th:nth-child(1),
+#dataTable thead th:nth-child(2){
+    z-index:4;
+    background:#1f2937;
+}
+
+#dataTable td{
+    white-space:nowrap;
+}
+
+#dataTable td:nth-child(2){
+    font-weight:500;
+}
+
+</style>
   </head>
   <body>
     <?php include 'menu.php'; ?>
-    <br />
-    <img src="assets/gambar/jvc.gif" alt="JVC KENWOOD CORPORATION" 
-    style="float:left;width:220px;height:35px;">
-    PT JVCKENWOOD ELECTRONICS INDONESIA<br />
-    TIME DELIVERY SCHEDULE<br /><br />
 
-    <form action="">
-      <label for="idsupp">Supplier : </label>&nbsp;&nbsp;
-      <select name="supp" id="idsupp">
-      </select>&nbsp;&nbsp;
-      <label for="idtanggal">Transmission Date :</label>&nbsp;&nbsp;
-      <select name="tanggal" id="idtanggal">
-      </select>&nbsp;&nbsp;  
-      <input type=BUTTON value="Display" name="mybtn" id="btn"></input>
-    </form>
-    <table id="dataTable" border="1" cellpadding="5" class="table table-bordered table-striped">
-      <thead class="table-dark"></thead>
-      <tbody></tbody>
-    </table>
+<div class="container mt-4">
 
+<div class="container-box">
+
+<div class="title-area">
+
+<img src="assets/gambar/jvc.gif" 
+style="width:220px;height:35px;">
+
+<div class="title-text">
+PT JVCKENWOOD ELECTRONICS INDONESIA<br>
+TIME DELIVERY SCHEDULE
+</div>
+
+</div>
+
+<div class="filter-box">
+
+<form class="row g-3 align-items-center">
+
+<div class="col-auto">
+<label>Supplier</label>
+<select name="supp" id="idsupp" class="form-select"></select>
+</div>
+
+<div class="col-auto">
+<label>Transmission Date</label>
+<select name="tanggal" id="idtanggal" class="form-select"></select>
+</div>
+
+<div class="col-auto">
+<label>&nbsp;</label><br>
+<button type="button" id="btn">Display</button>
+</div>
+
+</form>
+
+</div>
+
+<div style="overflow-x:auto">
+
+<div class="table-container">
+<table id="dataTable" class="table table-bordered table-hover">
+  <thead></thead>
+  <tbody></tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+
+</div>
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script>
@@ -58,6 +232,12 @@ let appkey = '';
 let urlsupp = '';
 let urltdstgl = '';
 let urltds = '';
+
+function formatNumber(num)
+{
+  if(num === null || num === '') return '';
+  return Number(num).toLocaleString('en-US');
+}
 
 fetch('getsession.php', {
   method: 'GET',
@@ -242,7 +422,7 @@ async function getTds(supp,tgl)
               if (key !== "partno" && key !== "partname") 
               {
                 const td = document.createElement("td");
-                td.textContent = item[key];
+                td.textContent = formatNumber(item[key]);
                 td.style.textAlign = "right";
                 row.appendChild(td);
               }

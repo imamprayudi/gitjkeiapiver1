@@ -8,7 +8,7 @@ require_once "security.php";
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JVCKENWOOD Web Services</title>
-
+<link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
 <style>
 
 body{

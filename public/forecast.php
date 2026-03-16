@@ -27,6 +27,118 @@ if ($appkey !== $envappkey) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <title>Forecast</title>
   <link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
+  <style>
+
+.table-container{
+  max-height:500px;
+  overflow:auto;
+}
+
+/* tabel */
+#dataTable{
+  border-collapse:collapse;
+}
+
+#dataTable th,
+#dataTable td{
+  border:1px solid #d0d0d0;
+  padding:4px;
+  white-space:nowrap;
+}
+
+/* HEADER */
+#dataTable thead th{
+  position:sticky;
+  top:0;
+  background:#f5f5f5;
+  z-index:5;
+}
+
+/* NO */
+#dataTable th:nth-child(1),
+#dataTable td:nth-child(1){
+  position:sticky;
+  left:0;
+  background:#fff;
+  z-index:4;
+  width:50px;
+}
+
+/* PARTNO */
+#dataTable th:nth-child(2),
+#dataTable td:nth-child(2){
+  position:sticky;
+  left:50px;
+  background:#fff;
+  z-index:4;
+  width:260px;
+}
+
+/* DD/MM */
+#dataTable th:nth-child(3),
+#dataTable td:nth-child(3){
+  position:sticky;
+  left:310px;
+  background:#fff;
+  z-index:4;
+  width:90px;
+}
+
+/* header untuk kolom sticky */
+#dataTable thead th:nth-child(1),
+#dataTable thead th:nth-child(2),
+#dataTable thead th:nth-child(3){
+  z-index:6;
+  background:#f5f5f5;
+}
+
+#dataTable{
+  border-collapse: collapse;
+  width: max-content;
+}
+
+/* kolom tanggal forecast */
+#dataTable th:nth-child(n+4),
+#dataTable td:nth-child(n+4){
+  min-width:60px;
+  text-align:right;
+}
+
+#dataTable thead th{
+  background: linear-gradient(#f8f9fa,#e9ecef);
+  color:#333;
+  font-weight:600;
+  border-bottom:2px solid #dcdcdc;
+}
+
+#dataTable tbody tr:nth-child(even){
+  background:#fafafa;
+}
+
+#dataTable tbody tr:hover{
+  background:#eef6ff;
+}
+
+.firm{
+  color:#0d6efd;
+  font-weight:600;
+}
+
+.forec{
+  color:#198754;
+}
+
+.plan{
+  color:#fd7e14;
+}
+
+.total{
+  font-weight:700;
+  color:#212529;
+}
+
+</style>
+
   </head>
   <body>
     <?php include 'menu.php'; ?>
@@ -48,10 +160,12 @@ if ($appkey !== $envappkey) {
       &nbsp;&nbsp;
       <input type="submit" value="Display">
     </form>
-    <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-container">
+<table id="dataTable" class="table table-hover">
+<thead></thead>
+<tbody></tbody>
+</table>
+</div>
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script>
@@ -61,6 +175,12 @@ let appkey = '';
 let postkey = '';
 let urlsupp = '';
 let urlforecast = '';
+
+
+function formatNumber(num){
+  if(num === null || num === '' || isNaN(num)) return num;
+  return Number(num).toLocaleString('en-US');
+}
 
 fetch('getsession.php', 
 {
@@ -182,14 +302,19 @@ async function getForecast(supp,tipe,post)
       datarow += `<td><pre>${item.partno}</pre><br>`;
       datarow += `${item.partname}<br>`;
       datarow += `${item.leadtime}</td>`;
-      datarow += `<td>FIRM<br>FOREC<br>PLAN<br>TOTAL</td>`;
+      datarow += `<td>
+      <span class="firm">FIRM</span><br>
+      <span class="forec">FOREC</span><br>
+      <span class="plan">PLAN</span><br>
+      <span class="total">TOTAL</span>
+      </td>`;
       
       for (let i = start; i <= end; i++) {
   datarow += `<td align="right">
-    ${item[`dt1qt${i}`] ?? ''}<br>
-    ${item[`dt2qt${i}`] ?? ''}<br>
-    ${item[`dt3qt${i}`] ?? ''}<br>
-    ${item[`dt4qt${i}`] ?? ''}
+    ${formatNumber(item[`dt1qt${i}`])}<br>
+    ${formatNumber(item[`dt2qt${i}`])}<br>
+    ${formatNumber(item[`dt3qt${i}`])}<br>
+    ${formatNumber(item[`dt4qt${i}`])}
   </td>`;
 }
         

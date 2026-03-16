@@ -24,6 +24,30 @@ if (!isset($_SESSION['user'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <title>Order Balance</title>
   <link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
+  <style>
+
+.table-container{
+  max-height:600px;
+  overflow:auto;
+  border:1px solid #ddd;
+}
+
+/* Freeze header */
+#dataTable thead th{
+  position: sticky;
+  top: 0;
+  background:#212529;
+  color:white;
+  z-index:5;
+  white-space:nowrap;
+}
+
+/* supaya kolom tidak patah */
+#dataTable td{
+  white-space:nowrap;
+}
+
+</style>
   </head>
   <body>
     <?php include 'menu.php'; ?>
@@ -48,11 +72,13 @@ if (!isset($_SESSION['user'])) {
       &nbsp;&nbsp;
       <input type="submit" value="Display">
     </form>
-    <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
+    <div class="table-container">
+
+<table id="dataTable" border="1" cellpadding="5" class="table table-hover">
       <thead></thead>
       <tbody></tbody>
     </table>
- 
+</div> 
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
@@ -64,6 +90,12 @@ let appkey = '';
 let postkey = '';
 let urlsupp = '';
 let urlob = '';
+
+function formatNumber(num)
+{
+  if(num === null || num === '') return '';
+  return Number(num).toLocaleString('en-US');
+}
 
 fetch('getsession.php', 
 {
@@ -153,10 +185,20 @@ async function getOb(supp,urutan,post)
     // Clear existing table data
     thead.innerHTML = '';
     tbody.innerHTML = '';
-    let judul = `<tr><th>NO</th><th>PARTNO</th><th>PART NAME</th>
-    <th>QUANTITY</th><th>ReqDate</th><th>PO</th><th>SQ</th> 
-    <th>BAL</th><th>SuppRest</th><th>MODEL</th>
-    <th>ISSUE DATE</th><th>PO Type</th></tr>`;
+    let judul = `<tr class="table-dark">
+    <th>NO</th>
+    <th>PARTNO</th>
+    <th>PART NAME</th>
+    <th>QUANTITY</th>
+    <th>ReqDate</th>
+    <th>PO</th>
+    <th>SQ</th> 
+    <th>BAL</th>
+    <th>SuppRest</th>
+    <th>MODEL</th>
+    <th>ISSUE DATE</th>
+    <th>PO Type</th>
+    </tr>`;
     thead.innerHTML += judul;
     let datarow = ``;
     data.forEach((item, index) => 
@@ -165,12 +207,12 @@ async function getOb(supp,urutan,post)
       <td align="right">${index + 1}</td>
       <td><pre>${item.partno}</pre></td>
       <td>${item.partname}</td>
-      <td align="right">${item.qty}</td>
+      <td align="right">${formatNumber(item.qty)}</td>
       <td>${item.reqdate.substring(0, 10)}</td>
       <td>${item.po}</td>
       <td>${item.posq}</td>
-      <td align="right">${item.ob}</td>
-      <td align="right">${item.supprest}</td>
+      <td align="right">${formatNumber(item.ob)}</td>
+      <td align="right">${formatNumber(item.supprest)}</td>
       <td>${item.model}</td>
       <td>${item.issuedate.substring(0, 10)}</td>
       <td>${item.potype}</td>

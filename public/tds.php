@@ -241,38 +241,56 @@ function downloadCSV_TDS() {
   const table = document.getElementById("dataTable");
   let csv = [];
 
-  // ===== HEADER =====
+  // HEADER
   const headers = table.querySelectorAll("thead th");
   let headerRow = [];
-  headers.forEach(th => {
+  headers.forEach((th, index) => {
     let text = th.innerText.replace(/\n/g, " ").trim();
     text = text.replace(/"/g, '""');
-    headerRow.push(`"${text}"`);
+    if(index === 1){ // kolom gabungan Part
+      headerRow.push('"PARTNO"','"PARTNAME"');
+    } else {
+      headerRow.push(`"${text}"`);
+    }
   });
   csv.push(headerRow.join(","));
 
-  // ===== BODY =====
+  // BODY
   const rows = table.querySelectorAll("tbody tr");
   rows.forEach(row => {
-    let cols = row.querySelectorAll("td");
+    const cols = row.querySelectorAll("td");
     let rowData = [];
 
-    cols.forEach(td => {
-      let text = td.innerText.trim();
+    cols.forEach((td,index) => {
 
-      // rapikan line break (karena ada <pre> + partname)
-      text = text.replace(/\n/g, " ");
+      if(index === 1){ // kolom gabungan Part
+        let partno = '';
+        let partname = '';
+        // ambil child nodes
+        td.childNodes.forEach(node => {
+          if(node.nodeName === "PRE"){
+            partno = node.innerText.trim();
+          } else if(node.nodeName === "#text" || node.nodeName === "BR"){
+            // #text biasanya berisi spasi atau linebreak
+            // kita ambil teks setelah <br>
+            if(node.nextSibling && node.nextSibling.nodeType === 3){ // teks setelah <br>
+              partname = node.nextSibling.textContent.trim();
+            }
+          }
+        });
+        rowData.push(`"${partno}"`);
+        rowData.push(`"${partname}"`);
+      } else {
+        let text = td.innerText.trim().replace(/"/g,'""');
+        rowData.push(`"${text}"`);
+      }
 
-      // escape quote
-      text = text.replace(/"/g, '""');
-
-      rowData.push(`"${text}"`);
     });
 
     csv.push(rowData.join(","));
   });
 
-  // ===== DOWNLOAD =====
+  // DOWNLOAD
   const csvString = csv.join("\n");
   const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -280,16 +298,13 @@ function downloadCSV_TDS() {
   const a = document.createElement("a");
   a.href = url;
 
-  // nama file otomatis
   const supp = document.getElementById('idsupp').value;
   const tgl = document.getElementById('idtanggal').value;
-
   a.download = `TDS_${supp}_${tgl}.csv`;
   a.click();
 
   URL.revokeObjectURL(url);
 }
-
 
 function formatNumber(num)
 {

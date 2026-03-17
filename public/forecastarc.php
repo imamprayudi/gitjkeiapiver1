@@ -157,6 +157,9 @@ if (!isset($_SESSION['user'])) {
       &nbsp;&nbsp;
       <input type="submit" value="Display">
     </form>
+    <br>
+<button id="btnDownload" class="btn btn-success">Download CSV</button>
+<br><br>
     <div class="table-container">
 <table id="dataTable" class="table table-hover">
 <thead></thead>
@@ -172,6 +175,112 @@ let appkey = '';
 let urlsupp = '';
 let urlforecasttgl = '';
 let urlforecast = '';
+
+function downloadCSV_Forecast() {
+  const table = document.getElementById("dataTable");
+  let csv = [];
+
+  // ===== HEADER =====
+  const headers = table.querySelectorAll("thead th");
+  let headerRow = [];
+
+  headers.forEach((th, index) => {
+    let text = th.innerText.trim().replace(/"/g, '""');
+
+    // kolom PARTNO kita pecah jadi 3
+    if(index === 1){
+      headerRow.push('"PARTNO"','"PARTNAME"','"LEADTIME"');
+    }
+    else if(index === 2){
+      // DD/MM jadi 4 baris
+      headerRow.push('"TYPE"'); 
+    }
+    else{
+      headerRow.push(`="` + text + `"`); 
+    }
+  });
+
+  csv.push(headerRow.join(","));
+
+  // ===== BODY =====
+  const rows = table.querySelectorAll("tbody tr");
+
+  rows.forEach(row => {
+    const cols = row.querySelectorAll("td");
+
+    // kita buat 4 baris (FIRM, FOREC, PLAN, TOTAL)
+    let rowFirm = [];
+    let rowForec = [];
+    let rowPlan = [];
+    let rowTotal = [];
+
+    cols.forEach((td, index) => {
+
+      // ===== KOLOM PART (gabungan) =====
+      if(index === 1){
+        const html = td.innerHTML.split("<br>");
+
+        const partno = (td.querySelector("pre")?.innerText || '').trim();
+        const partname = (html[1] || '').trim();
+        const leadtime = (html[2] || '').trim();
+
+        [rowFirm,rowForec,rowPlan,rowTotal].forEach(r=>{
+          r.push(`"${partno}"`);
+          r.push(`"${partname}"`);
+          r.push(`"${leadtime}"`);
+        });
+      }
+
+      // ===== KOLOM TYPE =====
+      else if(index === 2){
+        rowFirm.push('"FIRM"');
+        rowForec.push('"FOREC"');
+        rowPlan.push('"PLAN"');
+        rowTotal.push('"TOTAL"');
+      }
+
+      // ===== KOLOM QTY =====
+      else if(index >= 3){
+        let lines = td.innerText.split("\n");
+
+        rowFirm.push(`"${(lines[0]||'').trim()}"`);
+        rowForec.push(`"${(lines[1]||'').trim()}"`);
+        rowPlan.push(`"${(lines[2]||'').trim()}"`);
+        rowTotal.push(`"${(lines[3]||'').trim()}"`);
+      }
+
+      // ===== KOLOM NO =====
+      else {
+        let text = td.innerText.trim().replace(/"/g,'""');
+        [rowFirm,rowForec,rowPlan,rowTotal].forEach(r=>{
+          r.push(`"${text}"`);
+        });
+      }
+
+    });
+
+    csv.push(rowFirm.join(","));
+    csv.push(rowForec.join(","));
+    csv.push(rowPlan.join(","));
+    csv.push(rowTotal.join(","));
+  });
+
+  // ===== DOWNLOAD =====
+  const csvString = csv.join("\n");
+  const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+
+  const supp = document.getElementById('idsupp').value;
+  const tipe = document.getElementById('idtipe').value;
+
+  a.download = `FORECAST_${supp}_${tipe}.csv`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
 
 function formatNumber(num){
   if(num === null || num === '' || isNaN(num)) return num;
@@ -385,6 +494,9 @@ async function getForecast(supp,tipe,post,tgl)
   const tipe = document.getElementById('idtipe').value;
   getForecast(suppid,tipe,postkey,tanggal);
 });
+
+document.getElementById("btnDownload")
+  .addEventListener("click", downloadCSV_Forecast);
       
 </script>
   </body>

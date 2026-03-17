@@ -72,6 +72,9 @@ if (!isset($_SESSION['user'])) {
       &nbsp;&nbsp;
       <input type="submit" value="Display">
     </form>
+    <br>
+<button id="downloadCsvBtn" class="btn btn-success">Download CSV</button>
+<br><br>
     <div class="table-container">
 
 <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
@@ -90,6 +93,39 @@ let appkey = '';
 let postkey = '';
 let urlsupp = '';
 let urlob = '';
+
+function downloadTableAsCSV(filename = 'ob.csv') {
+    const table = document.getElementById('dataTable');
+    const rows = table.querySelectorAll('tr');
+    let csvContent = '';
+
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('th, td');
+        const rowData = [];
+        cols.forEach(col => {
+            let data = col.innerText;
+            // Escape double quotes
+            data = data.replace(/"/g, '""');
+            // Wrap data in double quotes
+            rowData.push(`"${data}"`);
+        });
+        csvContent += rowData.join(',') + '\n';
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Event listener untuk tombol
+document.getElementById('downloadCsvBtn').addEventListener('click', function() {
+    downloadTableAsCSV();
+});
 
 function formatNumber(num)
 {

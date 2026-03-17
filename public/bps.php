@@ -204,7 +204,9 @@ BIG PARTS SCHEDULE
 </div>
 
 </form>
-
+<button id="btnDownload" class="btn btn-success mb-2">
+  Download CSV
+</button>
 </div>
 
 <div style="overflow-x:auto">
@@ -230,6 +232,92 @@ let appkey = '';
 let urlsupp = '';
 let urlbpstgl = '';
 let urlbps = '';
+
+
+
+function downloadCSV_TDS() {
+  const table = document.getElementById("dataTable");
+  let csv = [];
+
+  // ===== HEADER =====
+  const headers = table.querySelectorAll("thead th");
+  let headerRow = [];
+  headers.forEach((th, index) => {
+  let text = th.innerText.replace(/\n/g, " ").trim();
+text = text.replace(/"/g, '""');
+
+// paksa jadi text (anti auto format Excel)
+if (/^\d{1,2}\/\d{1,2}$/.test(text)) {
+  text = "\t" + text;
+}
+
+  if (index === 1) {
+    headerRow.push(`"PARTNO"`);
+    headerRow.push(`"PARTNAME"`);
+  } else {
+    headerRow.push(`"${text}"`);
+  }
+});
+  csv.push(headerRow.join(","));
+
+  // ===== BODY =====
+  const rows = table.querySelectorAll("tbody tr");
+  rows.forEach(row => {
+  let cols = row.querySelectorAll("td");
+  let rowData = [];
+
+  cols.forEach((td, index) => {
+
+    // ===== KHUSUS PARTNO + PARTNAME =====
+    if (index === 1) {
+      const pre = td.querySelector("pre");
+
+      let partno = "";
+      let partname = "";
+
+      if (pre) {
+        partno = pre.innerText.trim();
+
+        let fullText = td.innerText.trim();
+        partname = fullText.replace(partno, "").trim();
+      }
+
+      rowData.push(`"${partno}"`);
+      rowData.push(`"${partname}"`);
+    } 
+    // ===== KOLOM LAIN =====
+    else {
+      let text = td.innerText.trim();
+      text = text.replace(/\n/g, " ");
+      text = text.replace(/"/g, '""');
+
+      rowData.push(`"${text}"`);
+    }
+
+  });
+
+  csv.push(rowData.join(","));
+});
+
+  // ===== DOWNLOAD =====
+  const csvString = csv.join("\n");
+  const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+
+  // nama file otomatis
+  const supp = document.getElementById('idsupp').value;
+  const tgl = document.getElementById('idtanggal').value;
+
+  a.download = `BPS_${supp}_${tgl}.csv`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+
 
 function formatNumber(num)
 {
@@ -425,6 +513,9 @@ btn.addEventListener('click', function()
 {
   getBps(document.getElementById('idsupp').value,document.getElementById('idtanggal').value);
 });
+
+document.getElementById("btnDownload")
+  .addEventListener("click", downloadCSV_TDS);
     </script>
   </body>
   </html>

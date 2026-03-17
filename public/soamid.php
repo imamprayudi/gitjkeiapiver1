@@ -25,6 +25,50 @@ if (!isset($_SESSION['user'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <title>Statement of Account</title>
   <link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
+  <style>
+#dataTable {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* header sticky */
+#dataTable thead th {
+  position: sticky;
+  top: 0;
+  background: #212529; /* gelap */
+  color: white;
+  z-index: 10;
+}
+
+/* shadow saat scroll */
+#dataTable thead th {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+
+#dataTable pre {
+  margin: 0;
+  white-space: pre;   /* tetap 1 baris */
+  font-family: inherit;
+}
+
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+/* sticky header tetap jalan */
+#dataTable thead th {
+  position: sticky;
+  top: 0;
+  background: #212529;
+  color: white;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+</style>
   </head>
   <body>
     <?php include 'menu.php'; ?>
@@ -50,6 +94,9 @@ if (!isset($_SESSION['user'])) {
   <textarea id="txtMemo2" name="memo2" cols="50" rows="4" placeholder="Tulis memo..."></textarea>
   <input type="submit" value="Update Comment">
 </form>
+<button id="btnDownload" class="btn btn-success mb-2">
+  Download CSV
+</button>
 </div>
 <table id="sumTable" border="1" cellpadding="5" class="table table-hover">
       <thead></thead>
@@ -60,11 +107,13 @@ if (!isset($_SESSION['user'])) {
       <tbody></tbody>
     </table>
 
-    <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
+<div class="table-container">
+  <table id="dataTable" class="table table-hover">
+    
       <thead></thead>
       <tbody></tbody>
     </table>
- 
+</div> 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script>
 let user = '';
@@ -76,6 +125,59 @@ let urlsoamid = '';
 let urlsoacommid = '';
 let gblBlnThn = '';
 let gblSuppId = '';
+
+
+function downloadCSV() {
+  const table = document.getElementById("dataTable");
+  let csv = [];
+
+  // ambil header
+  const headers = table.querySelectorAll("thead th");
+  let headerRow = [];
+  headers.forEach(th => {
+    headerRow.push('"' + th.innerText.replace(/\n/g, ' ') + '"');
+  });
+  csv.push(headerRow.join(","));
+
+  // ambil isi tabel
+  const rows = table.querySelectorAll("tbody tr");
+  rows.forEach(row => {
+    let cols = row.querySelectorAll("td");
+    let rowData = [];
+
+    cols.forEach(td => {
+      let text = td.innerText.trim();
+
+      // escape double quote
+      text = text.replace(/"/g, '""');
+
+      rowData.push('"' + text + '"');
+    });
+
+    csv.push(rowData.join(","));
+  });
+
+  // gabungkan
+  const csvString = csv.join("\n");
+
+  // download file
+  const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "soamid.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+
+
+function formatNumber(val) {
+  let num = Number(val || 0);
+  return num.toLocaleString('en-US');
+}
 
 document.getElementById("komentar").style.display = "none";
 
@@ -308,10 +410,10 @@ async function getSoamid(supp,tgl)
       <td>${item.invoice || ""}</td>
       <td><pre>${item.partno || ""}</pre></td>
       <td>${item.partname || ""}</td>
-      <td align="right">${item.qty || ""}</td>
+      <td align="right">${formatNumber(item.qty)}</td>
       <td align="right">${item.price || ""}</td>
-      <td align="right">${item.amount || ""}</td>
-      <td align="right">${item.dncn || ""}</td>
+      <td align="right">${formatNumber(item.amount)}</td>
+      <td align="right">${formatNumber(item.dncn)}</td>
       </tr>`;
     });
     datatbody.innerHTML += datarow;
@@ -370,6 +472,7 @@ document.getElementById('frmkomentar').addEventListener('submit', function(e)
   postCom(gblBlnThn,gblSuppId,suppKomen,jeinKomen);
 });  
       
+document.getElementById("btnDownload").addEventListener("click", downloadCSV);
 // --------------------------------------------------------------------------
 
     </script>

@@ -205,12 +205,15 @@ TIME DELIVERY SCHEDULE
 </div>
 
 </form>
-
+<button id="btnDownload" class="btn btn-success mb-2">
+  Download CSV
+</button>
 </div>
 
 <div style="overflow-x:auto">
 
 <div class="table-container">
+  
 <table id="dataTable" class="table table-bordered table-hover">
   <thead></thead>
   <tbody></tbody>
@@ -232,6 +235,61 @@ let appkey = '';
 let urlsupp = '';
 let urltdstgl = '';
 let urltds = '';
+
+
+function downloadCSV_TDS() {
+  const table = document.getElementById("dataTable");
+  let csv = [];
+
+  // ===== HEADER =====
+  const headers = table.querySelectorAll("thead th");
+  let headerRow = [];
+  headers.forEach(th => {
+    let text = th.innerText.replace(/\n/g, " ").trim();
+    text = text.replace(/"/g, '""');
+    headerRow.push(`"${text}"`);
+  });
+  csv.push(headerRow.join(","));
+
+  // ===== BODY =====
+  const rows = table.querySelectorAll("tbody tr");
+  rows.forEach(row => {
+    let cols = row.querySelectorAll("td");
+    let rowData = [];
+
+    cols.forEach(td => {
+      let text = td.innerText.trim();
+
+      // rapikan line break (karena ada <pre> + partname)
+      text = text.replace(/\n/g, " ");
+
+      // escape quote
+      text = text.replace(/"/g, '""');
+
+      rowData.push(`"${text}"`);
+    });
+
+    csv.push(rowData.join(","));
+  });
+
+  // ===== DOWNLOAD =====
+  const csvString = csv.join("\n");
+  const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+
+  // nama file otomatis
+  const supp = document.getElementById('idsupp').value;
+  const tgl = document.getElementById('idtanggal').value;
+
+  a.download = `TDS_${supp}_${tgl}.csv`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
 
 function formatNumber(num)
 {
@@ -443,6 +501,9 @@ btn.addEventListener('click', function()
 {
   getTds(document.getElementById('idsupp').value,document.getElementById('idtanggal').value);
 });
+
+document.getElementById("btnDownload")
+  .addEventListener("click", downloadCSV_TDS);
     </script>
   </body>
   </html>

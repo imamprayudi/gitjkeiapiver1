@@ -25,6 +25,56 @@ if (!isset($_SESSION['user'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <title>Material Summary</title>
   <link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
+  <style>
+.table-container {
+  max-height: 500px; /* tinggi area scroll */
+  overflow: auto;
+}
+
+#dataTable thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa; /* warna header */
+  z-index: 2;
+  border-bottom: 2px solid #dee2e6;
+}
+
+#dataTable {
+  border-collapse: separate;
+  width: 100%;
+}
+
+#dataTable th,
+#dataTable td {
+  white-space: nowrap;
+}
+
+<style>
+#dataTable {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+  background: white;
+}
+
+#dataTable thead th {
+  background-color: #212529;
+  color: #fff;
+}
+
+#dataTable td {
+  border-bottom: 1px solid #f1f3f5;
+}
+
+#dataTable tbody tr:hover {
+  background-color: #f1f3f5;
+  transition: 0.2s;
+}
+</style>
+
+
+</style>
+
   </head>
   <body>
     <?php include 'menu.php'; ?>
@@ -43,10 +93,12 @@ if (!isset($_SESSION['user'])) {
       </select>&nbsp;&nbsp;  
       <input type=BUTTON value="Display" name="mybtn" id="btn"></input>
     </form>
-    <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-container">
+ <table id="dataTable" class="table table-hover">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+</div>
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script>
@@ -209,15 +261,23 @@ async function getMatsum(supp,tgl)
       tdPartname.innerHTML = `${item.partname?.trim() || ''}`;
       row.appendChild(tdPartname);
       Object.keys(item).forEach(key => 
-      {
-        if (key !== "partno" && key !== "partname") 
-        {
-          const td = document.createElement("td");
-          td.textContent = item[key];
-          td.style.textAlign = "right";
-          row.appendChild(td);
-        }
-      });
+{
+  if (key !== "partno" && key !== "partname") 
+  {
+    const td = document.createElement("td");
+
+    let value = item[key];
+
+    // format angka
+    if (!isNaN(value) && value !== '') {
+      value = Number(value).toLocaleString('en-US');
+    }
+
+    td.textContent = value;
+    td.style.textAlign = "right";
+    row.appendChild(td);
+  }
+});
       tbody.appendChild(row);
     });
   } catch (error) 

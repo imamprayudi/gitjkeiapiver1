@@ -25,6 +25,38 @@ if (!isset($_SESSION['user'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <title>Material Issued Detail</title>
   <link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
+  <style>
+.table-container {
+  max-height: 500px;
+  overflow: auto;
+}
+
+/* HEADER STICKY + DARK */
+#dataTable thead th {
+  position: sticky;
+  top: 0;
+  background: #212529;
+  color: #fff;
+  z-index: 2;
+  border-bottom: 2px solid #343a40;
+  transition: box-shadow 0.2s;
+}
+
+/* shadow saat scroll */
+.table-container.scrolled thead th {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* garis halus */
+#dataTable td {
+  border-bottom: 1px solid #f1f3f5;
+}
+
+/* hover */
+#dataTable tbody tr:hover {
+  background-color: #f8f9fa;
+}
+</style>
   </head>
   <body>
     <?php include 'menu.php'; ?>
@@ -44,10 +76,12 @@ if (!isset($_SESSION['user'])) {
       <input type="date" id="idtglakhir" name="tglakhir">&nbsp;&nbsp;
       <input type="submit" value="Display">
     </form>
-    <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-container">
+  <table id="dataTable" class="table table-hover">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+</div>
  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script>
@@ -162,7 +196,9 @@ async function getMatrec(supp,tglawal,tglakhir)
       <td>${item.tgl.substring(0, 10)}</td>
       <td><pre>${item.partno}</pre></td>
       <td>${item.po}</td>
-      <td align="right">${item.qty}</td>
+      <td align="right">
+      ${item.qty ? Number(item.qty).toLocaleString('en-US') : '0'}
+      </td>
       <td>${item.transcode}</td>
       <td>${item.pm}</td>
       </tr>`;
@@ -195,6 +231,17 @@ document.addEventListener('submit', function(e)
   } 
   getMatrec(suppid,tglawal,tglakhir);
 
+});
+
+
+const container = document.querySelector('.table-container');
+
+container.addEventListener('scroll', function() {
+  if (this.scrollTop > 0) {
+    this.classList.add('scrolled');
+  } else {
+    this.classList.remove('scrolled');
+  }
 });
       
 </script>

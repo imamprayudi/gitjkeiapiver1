@@ -26,6 +26,7 @@ parse_str($query,$params);
 
 $rdate = $params['rdate'] ?? '';
 $supp  = $params['supp'] ?? '';
+$status = $params['status'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -89,7 +90,7 @@ $supp  = $params['supp'] ?? '';
 style="float:left;width:220px;height:35px;">
 
 PT JVCKENWOOD ELECTRONICS INDONESIA<br>
-PURCHASE ORDER DETAIL<br><br>
+PURCHASE ORDER DETAIL&nbsp;&nbsp;*** The Purchase Order consider accepted if there is no reply within 5 days ***<br><br>
 
 <div class="container mt-3">
 
@@ -247,7 +248,8 @@ async function loadData()
       },
       body: new URLSearchParams({
         rdate: rdate,
-        supp: supp
+        supp: supp,
+        status: status
       })
     });
 

@@ -53,18 +53,28 @@ $pdo = new PDO($dsn, $user, $pass, [
 $suppid   = trim($_POST['supp'] ?? '');
 $tglawal  = trim($_POST['tglawal'] ?? '');
 $tglakhir = trim($_POST['tglakhir'] ?? '');
+$status = trim($_POST['status'] ?? '');
 
 // ======================
 // QUERY (MySQL version)
 // ======================
 $sql = "
-select distinct 
-rdate from mailpo 
-where supplier = ? AND rdate BETWEEN ? AND ? order by rdate desc;
+select distinct rdate 
+from mailpo 
+where supplier = ?
+  AND rdate BETWEEN ? AND ?
 ";
+$params = [$suppid, $tglawal, $tglakhir];
+
+if($status !== ''){
+    $sql .= " AND supconfstatus = ? ";
+    $params[] = $status;
+}
+
+$sql .= " order by rdate desc ";
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute([$suppid, $tglawal, $tglakhir]);
+$stmt->execute($params);
 
 $data = $stmt->fetchAll();
 

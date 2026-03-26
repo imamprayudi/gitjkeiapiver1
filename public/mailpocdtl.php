@@ -21,6 +21,12 @@ parse_str($query,$params);
 
 $rdate = $params['rdate'] ?? '';
 $supp  = $params['supp'] ?? '';
+$status = $params['status'] ?? '';
+$validstatus = ['CONFIRMED','REJECTED'];
+
+if (!in_array($status, $validstatus)) {
+    $status = '';
+}
 
 ?>
 <html lang="en">
@@ -80,7 +86,7 @@ $supp  = $params['supp'] ?? '';
 style="float:left;width:220px;height:35px;">
 
 PT JVCKENWOOD ELECTRONICS INDONESIA<br>
-PURCHASE ORDER CHANGE DETAIL<br><br>
+PURCHASE ORDER CHANGE DETAIL&nbsp;&nbsp;*** The Purchase Order Change consider accepted if there is no reply within 5 days ***<br><br>
 
 <div class="container mt-3">
 <div id="supplierinfo" class="mb-2 fw-bold"></div>
@@ -161,7 +167,8 @@ Download Excel
 <script>
 const rdate = "<?= $rdate ?>";
 const supp  = "<?= $supp ?>";
-let urlmailpodtl = '';
+const status = "<?= $status ?>";
+let urlmailpocdtl = '';
 
 const reasonawal = document.getElementById("suppreason");
 reasonawal.disabled = true;
@@ -229,7 +236,8 @@ async function loadData()
       },
       body: new URLSearchParams({
         rdate: rdate,
-        supp: supp
+        supp: supp,
+        status: status
       })
     });
 

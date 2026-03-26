@@ -33,7 +33,7 @@ if (!isset($_SESSION['user'])) {
     <img src="assets/gambar/jvc.gif" alt="JVC KENWOOD CORPORATION" 
     style="float:left;width:220px;height:35px;">
     PT JVCKENWOOD ELECTRONICS INDONESIA<br />
-    PURCHASE ORDER CHANGE<br /><br />
+    PURCHASE ORDER CHANGE&nbsp;&nbsp;*** The Purchase Order Change consider accepted if there is no reply within 5 days ***<br /><br />
 
     <form action="">
       Supplier : &nbsp;&nbsp;
@@ -43,6 +43,14 @@ if (!isset($_SESSION['user'])) {
       <input type="date" id="idtglawal" name="tglawal">&nbsp;&nbsp;
       <label for="idtglakhir">AND&nbsp;&nbsp;</label>
       <input type="date" id="idtglakhir" name="tglakhir">&nbsp;&nbsp;
+      <label for="idstatus">STATUS :</label>
+<select id="idstatus" name="status">
+    <option value="">ALL</option>
+    <option value="UNREAD">UNREAD</option>
+    <option value="READ">READ</option>
+    <option value="CONFIRMED">CONFIRMED</option>
+    <option value="REJECTED">REJECTED</option>
+</select>
       <input type="submit" value="Display">
     </form>
     <table id="dataTable" border="1" cellpadding="5" class="table table-hover">
@@ -58,7 +66,7 @@ let user = '';
 let level = '';
 let appkey = '';   
 let urlsupp = '';
-let urlmailpotgl = '';
+let urlmailpoctgl = '';
 
 fetch('getsession.php',
 {
@@ -120,7 +128,7 @@ async function getSupplier(user)
 }
 
 
-async function getMailpo(supp,tglawal,tglakhir)
+async function getMailpo(supp, tglawal, tglakhir, status)
 {
   try
   {
@@ -131,7 +139,8 @@ async function getMailpo(supp,tglawal,tglakhir)
       body:new URLSearchParams({
         supp:supp,
         tglawal:tglawal,
-        tglakhir:tglakhir
+        tglakhir:tglakhir,
+        status:status
       })
     });
 
@@ -157,7 +166,7 @@ async function getMailpo(supp,tglawal,tglakhir)
     data.forEach((item,index)=>
     {
 
-      const param = encryptParam(`rdate=${item.rdate}&supp=${supp}`);
+      const param = encryptParam(`rdate=${item.rdate}&supp=${supp}&status=${status}`);
 
       datarow += `
       <tr>
@@ -190,6 +199,7 @@ document.addEventListener('submit',function(e)
   const suppid = document.getElementById('idsupp').value;
   const tglawal = document.getElementById('idtglawal').value;
   const tglakhir = document.getElementById('idtglakhir').value;
+  const status = document.getElementById('idstatus').value;
 
   if(!tglawal || !tglakhir)
   {
@@ -206,7 +216,7 @@ document.addEventListener('submit',function(e)
     return;
   }
 
-  getMailpo(suppid,tglawal,tglakhir);
+  getMailpo(suppid, tglawal, tglakhir, status);
 
 });
 

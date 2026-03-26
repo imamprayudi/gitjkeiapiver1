@@ -52,6 +52,7 @@ $pdo = new PDO($dsn, $user, $pass, [
 // ======================
 $tanggal = trim($_POST['rdate'] ?? '');
 $suppid  = trim($_POST['supp'] ?? '');
+$status   = trim($_POST['status'] ?? '');
 
 // ======================
 // QUERY (PDO)
@@ -65,11 +66,18 @@ SELECT
 FROM mailpoc
 WHERE supplier = ?
   AND rdate  = ?
-ORDER BY idno ASC
 ";
 
+$params = [$suppid, $tanggal];
+if($status !== ''){
+    $sql .= " AND supconfstatus = ? ";
+    $params[] = $status;
+}
+
+$sql .= " ORDER BY idno ASC ";
+
 $stmt = $pdo->prepare($sql);
-$stmt->execute([$suppid, $tanggal]);
+$stmt->execute($params);
 
 $data = $stmt->fetchAll();
 

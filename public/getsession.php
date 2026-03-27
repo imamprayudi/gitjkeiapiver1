@@ -61,6 +61,8 @@ if (isset($_SESSION['user'])) {
   $urlmailpodtl = $env['API_MAILPO_DTL_URL'];
   $urlmailpoctgl = $env['API_MAILPOC_TGL_URL'];
   $urlmailpocdtl = $env['API_MAILPOC_DTL_URL'];
+  $urlprofileread = $env['API_PROFILE_READ_URL'];
+  $urlprofileupdate = $env['API_PROFILE_UPDATE_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
@@ -90,7 +92,9 @@ if (isset($_SESSION['user'])) {
     'urlmailpotgl' => $urlmailpotgl,
     'urlmailpodtl' => $urlmailpodtl,
     'urlmailpoctgl' => $urlmailpoctgl,
-    'urlmailpocdtl' => $urlmailpocdtl
+    'urlmailpocdtl' => $urlmailpocdtl,
+    'urlprofileread' => $urlprofileread,
+    'urlprofileupdate' => $urlprofileupdate
   );
   echo json_encode($response);
 } else {

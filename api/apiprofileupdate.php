@@ -1,28 +1,26 @@
 <?php
-session_start();
-
 header("Content-Type: application/json");
 
-// Cek session
-if (!isset($_SESSION['user'])) {
-    echo json_encode(["status" => "error", "message" => "Unauthorized"]);
-    exit();
-}
-
-// Ambil JSON dari fetch()
+// Ambil JSON body
 $input = json_decode(file_get_contents("php://input"), true);
 
+$userid    = trim($input['userid'] ?? "");
 $username  = trim($input['username'] ?? "");
 $email     = trim($input['email'] ?? "");
 $oldpass   = trim($input['oldpassword'] ?? "");
 $newpass   = trim($input['newpassword'] ?? "");
+
+// Validasi
+if ($userid === "") {
+    echo json_encode(["status" => "error", "message" => "UserID required"]);
+    exit();
+}
 
 if ($username === "" || $email === "") {
     echo json_encode(["status" => "error", "message" => "Username and email required"]);
     exit();
 }
 
-// Validasi email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo json_encode(["status" => "error", "message" => "Email tidak valid"]);
     exit();
@@ -37,12 +35,15 @@ $pdo = new PDO(
     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
 );
 
-$userid = $_SESSION['user'];
-
-// Ambil password lama dari DB
+// Ambil password lama
 $stmt = $pdo->prepare("SELECT userpass FROM usertbl WHERE userid = ?");
 $stmt->execute([$userid]);
 $row = $stmt->fetch();
+
+if (!$row) {
+    echo json_encode(["status" => "error", "message" => "User not found"]);
+    exit();
+}
 
 $dbpass = $row['userpass'];
 
@@ -50,7 +51,7 @@ $dbpass = $row['userpass'];
 //         UPDATE LOGIC
 // =============================
 
-// ➤ User tidak ingin ganti password
+// Tidak ganti password
 if ($newpass === "") {
 
     $stmt = $pdo->prepare("UPDATE usertbl SET username=?, useremail=? WHERE userid=?");
@@ -58,7 +59,7 @@ if ($newpass === "") {
 
 } else {
 
-    // ➤ User ingin ganti password → wajib isi oldpass
+    // Kalau mau ganti password → oldpass wajib benar
     if ($oldpass === "") {
         echo json_encode(["status" => "error", "message" => "Old password required"]);
         exit();
@@ -69,10 +70,10 @@ if ($newpass === "") {
         exit();
     }
 
-    // Update all
+    // Update semua
     $stmt = $pdo->prepare("UPDATE usertbl SET username=?, useremail=?, userpass=? WHERE userid=?");
     $stmt->execute([$username, $email, $newpass, $userid]);
 }
 
-echo json_encode(["status" => "success", "message" => "Profile updated"]);
+echo json_encode(["status" => "success", "message" => "Profile updated ok"]);
 exit();

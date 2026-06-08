@@ -113,9 +113,6 @@ if (!user || !user.userid) {
   urlprofileread = data.urlprofileread;
   urlprofileupdate = data.urlprofileupdate;
   urlprofileupdatejkei = data.urlprofileupdatejkei;
-  console.log("urlprofileread:", urlprofileread);
-  console.log("urlprofileupdate:", urlprofileupdate);
-  console.log("urlprofileupdatejkei:", urlprofileupdatejkei);
   loadProfile(data.user);
 }) 
 .catch(err => console.error(err));

@@ -98,7 +98,9 @@ if ($level == 3) {
             Delivery
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Delivery Instructions</a></li>
+            <li><a class="dropdown-item" href="diget.php">Get Delivery Instructions</a></li>
+            <li><a class="dropdown-item" href="diedit.php">Edit Delivery Instructions</a></li>
+            <li><a class="dropdown-item" href="diview.php">View Delivery Instructions</a></li>
             <li><a class="dropdown-item" href="#">Standard Packing Maintenance</a></li>
             <li><a class="dropdown-item" href="barcodelist.php">Print Barcode Label</a></li>
           </ul>

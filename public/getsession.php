@@ -64,6 +64,11 @@ if (isset($_SESSION['user'])) {
   $urlprofileread = $env['API_PROFILE_READ_URL'];
   $urlprofileupdate = $env['API_PROFILE_UPDATE_URL'];
   $urlprofileupdatejkei = $env['API_PROFILE_UPDATE_JKEI_URL'];
+  $urldimakejkei = $env['API_DIMAKE_JKEI_URL'];
+  $urldieditjkei = $env['API_DIEDIT_JKEI_URL'];
+  $urldiinvjkei = $env['API_DIINV_JKEI_URL'];
+  $urldiqtyjkei = $env['API_DIQTY_JKEI_URL'];
+  $urldiuploadjkei = $env['API_DIUPLOAD_JKEI_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
@@ -96,7 +101,12 @@ if (isset($_SESSION['user'])) {
     'urlmailpocdtl' => $urlmailpocdtl,
     'urlprofileread' => $urlprofileread,
     'urlprofileupdate' => $urlprofileupdate,
-    'urlprofileupdatejkei' => $urlprofileupdatejkei
+    'urlprofileupdatejkei' => $urlprofileupdatejkei,
+    'urldimakejkei' => $urldimakejkei,
+    'urldieditjkei' => $urldieditjkei,
+    'urldiinvjkei' => $urldiinvjkei,
+    'urldiqtyjkei' => $urldiqtyjkei,
+    'urldiuploadjkei' => $urldiuploadjkei
   );
   echo json_encode($response);
 } else {

@@ -69,6 +69,7 @@ if (isset($_SESSION['user'])) {
   $urldiinvjkei = $env['API_DIINV_JKEI_URL'];
   $urldiqtyjkei = $env['API_DIQTY_JKEI_URL'];
   $urldiuploadjkei = $env['API_DIUPLOAD_JKEI_URL'];
+  $urldashboardmailpo = $env['API_DASHBOARD_MAILPO_URL'];
   // Buat array respons JSON
   $response = array(
     'user' => $user,
@@ -106,7 +107,8 @@ if (isset($_SESSION['user'])) {
     'urldieditjkei' => $urldieditjkei,
     'urldiinvjkei' => $urldiinvjkei,
     'urldiqtyjkei' => $urldiqtyjkei,
-    'urldiuploadjkei' => $urldiuploadjkei
+    'urldiuploadjkei' => $urldiuploadjkei,
+    'urldashboardmailpo' => $urldashboardmailpo
   );
   echo json_encode($response);
 } else {

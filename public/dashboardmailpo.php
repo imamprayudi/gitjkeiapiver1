@@ -61,7 +61,7 @@ if (!isset($_SESSION['user'])) {
 
 <label for="idbulan">BULAN :</label>
 <select id="idbulan" name="bulan">
-    <option value="ALL">ALL</option>
+  <!--  <option value="ALL">ALL</option> -->
     <option value="1">Januari</option>
     <option value="2">Februari</option>
     <option value="3">Maret</option>

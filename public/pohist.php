@@ -31,7 +31,7 @@ if (!isset($_SESSION['user'])) {
     <img src="assets/gambar/jvc.gif" alt="JVC KENWOOD CORPORATION" 
     style="float:left;width:220px;height:35px;">
     PT JVCKENWOOD ELECTRONICS INDONESIA<br />
-    PO HISTORY <br /><br />
+    PO HISTORY <br /><br />&nbsp;&nbsp;Please input PO Number : &nbsp;&nbsp;
 <input type="text" id="pono" placeholder="Input PO Number">
 
 <button onclick="searchPO()">
@@ -78,21 +78,67 @@ async function searchPO() {
         //-----------------------------------
 
         if(result.mailpo)
-        {
+{
+    html += "<h3>Original PO</h3>";
 
-            html+="<h3>Original PO</h3>";
+    html += "<table class='table table-bordered table-striped'>";
 
-            html+="<table border='1' cellpadding='5'>";
+    html += "<thead class='table-dark'>";
+    html += "<tr>";
+    html += "<th>TRANSMISSION NUMBER</th>";
+    html += "<th>TRANSMISSION DATE</th>";
+    html += "<th>PO NUMBER</th>";
+    html += "<th>PART NUMBER</th>";
+    html += "<th>PART NAME</th>";
+    html += "<th>PO QTY</th>";
+    html += "<th>PO DATE</th>";
+    html += "<th>PRICE</th>";
+    html += "<th>MODEL</th>";
+    html += "<th>PO TYPE</th>";
+    html += "<th>SUPP STATUS</th>";
+    html += "<th>SUPP REASON</th>";
+    html += "<th>BY</th>";
+    html += "<th>AT</th>";
+    html += "<th>PUR STATUS</th>";
+    html += "<th>PUR REASON</th>";
+    html += "<th>BY</th>";
+    html += "<th>AT</th>";
+    html += "<th>MC STATUS</th>";
+    html += "<th>MC REASON</th>";
+    html += "<th>BY</th>";
+    html += "<th>AT</th>";
+    html += "</tr>";
+    html += "</thead>";
 
-            html+="<tr><td>PO</td><td>"+result.mailpo.pono+"</td></tr>";
-            html+="<tr><td>Supplier</td><td>"+result.mailpo.suppliername+"</td></tr>";
-            html+="<tr><td>Part</td><td>"+result.mailpo.partno+"</td></tr>";
-            html+="<tr><td>Qty</td><td>"+result.mailpo.newqty+"</td></tr>";
-            html+="<tr><td>Delivery</td><td>"+result.mailpo.newdate+"</td></tr>";
+    html += "<tbody>";
+    html += "<tr>";
+    html += "<td>" + result.mailpo.idno + "</td>";
+    html += "<td>" + result.mailpo.rdate + "</td>";
+    html += "<td>" + result.mailpo.pono + "</td>";
+    html += "<td><pre>" + result.mailpo.partno + "</pre></td>";
+    html += "<td>" + result.mailpo.partname + "</td>";
+    html += "<td class='text-end'>" + result.mailpo.newqty + "</td>";
+    html += "<td>" + result.mailpo.newdate + "</td>";
+    html += "<td>" + result.mailpo.price + "</td>";
+    html += "<td>" + result.mailpo.model + "</td>";
+    html += "<td>" + result.mailpo.potype + "</td>";
+    html += "<td>" + result.mailpo.supconfstatus + "</td>";
+    html += "<td>" + result.mailpo.supconfreason + "</td>";
+    html += "<td>" + result.mailpo.supconfby + "</td>";
+    html += "<td>" + result.mailpo.supconfat + "</td>";
+    html += "<td>" + result.mailpo.purconfstatus + "</td>";
+    html += "<td>" + result.mailpo.purconfreason + "</td>"; 
+    html += "<td>" + result.mailpo.purconfby + "</td>";
+    html += "<td>" + result.mailpo.purconfat + "</td>";
+    html += "<td>" + result.mailpo.mcconfstatus + "</td>";
+    html += "<td>" + result.mailpo.mcconfreason + "</td>";
+    html += "<td>" + result.mailpo.mcconfby + "</td>";
+    html += "<td>" + result.mailpo.mcconfat + "</td>";
+    html += "</tr>";
+    html += "</tbody>";
 
-            html+="</table><br>";
-
-        }
+    html += "</table><br>";
+}
 
         //-----------------------------------
         // Revision
@@ -103,28 +149,70 @@ async function searchPO() {
         if(result.mailpoc.length>0)
         {
 
-            html+="<table border='1' cellpadding='5'>";
-
+            html+="<table class='table table-bordered table-striped'>";
+            html+="<thead class='table-dark'>";
             html+="<tr>";
-            html+="<th>No</th>";
-            html+="<th>Date</th>";
-            html+="<th>Old Qty</th>";
-            html+="<th>New Qty</th>";
-            html+="<th>Old Date</th>";
-            html+="<th>New Date</th>";
+            html+="<th>NO</th>";
+            html+="<th>TRANSMISSION NUMBER</th>";
+            html+="<th>TRANSMISSION DATE</th>";
+            html+="<th>PO NUMBER</th>";
+            html+="<th>PART NUMBER</th>";
+            html+="<th>PART NAME</th>";
+            html+="<th>NEW QTY</th>";
+            html+="<th>NEW DATE</th>";
+            html+="<th>OLD QTY</th>";
+            html+="<th>OLD DATE</th>";
+            html+="<th>PRICE</th>";
+            html+="<th>MODEL</th>";
+            html+="<th>PO TYPE</th>";
+            html+="<th>ALT NO</th>";
+            html+="<th>PO STATUS</th>";
+            html+="<th>SUPP STATUS</th>";
+            html+="<th>SUPP REASON</th>";
+            html+="<th>BY</th>";
+            html+="<th>AT</th>";
+            html+="<th>PUR STATUS</th>";
+            html+="<th>PUR REASON</th>";
+            html+="<th>BY</th>";
+            html+="<th>AT</th>";
+            html+="<th>MC STATUS</th>";
+            html+="<th>MC REASON</th>";
+            html+="<th>BY</th>";
+            html+="<th>AT</th>";
             html+="</tr>";
+            html += "</thead>";
 
             result.mailpoc.forEach(function(r,index){
 
                 html+="<tr>";
 
                 html+="<td>"+(index+1)+"</td>";
+                html+="<td>"+r.idno+"</td>";
                 html+="<td>"+r.rdate+"</td>";
-                html+="<td>"+r.oldqty+"</td>";
+                html+="<td>"+r.pono+"</td>";
+                html+="<td><pre>"+r.partno+"</pre></td>";
+                html+="<td>"+r.partname+"</td>";
                 html+="<td>"+r.newqty+"</td>";
-                html+="<td>"+r.olddate+"</td>";
                 html+="<td>"+r.newdate+"</td>";
-
+                html+="<td>"+r.oldqty+"</td>";
+                html+="<td>"+r.olddate+"</td>";
+                html+="<td>"+r.price+"</td>";
+                html+="<td>"+r.model+"</td>";
+                html+="<td>"+r.potype+"</td>";
+                html+="<td>"+r.altno+"</td>";
+                html+="<td>"+r.status+"</td>";
+                html+="<td>"+r.supconfstatus+"</td>";
+                html+="<td>"+r.supconfreason+"</td>";
+                html+="<td>"+r.supconfby+"</td>";
+                html+="<td>"+r.supconfat+"</td>";
+                html+="<td>"+r.purconfstatus+"</td>";
+                html+="<td>"+r.purconfreason+"</td>";
+                html+="<td>"+r.purconfby+"</td>";
+                html+="<td>"+r.purconfat+"</td>";
+                html+="<td>"+r.mcconfstatus+"</td>";
+                html+="<td>"+r.mcconfreason+"</td>";
+                html+="<td>"+r.mcconfby+"</td>";
+                html+="<td>"+r.mcconfat+"</td>";
                 html+="</tr>";
 
             });

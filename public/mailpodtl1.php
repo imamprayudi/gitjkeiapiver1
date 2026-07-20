@@ -1,0 +1,496 @@
+
+<?php
+require_once "security.php";
+session_start();
+
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+}
+
+  $appkey = $_SESSION['appkey'];
+  $env = parse_ini_file(__DIR__ . '/../config/.env');
+  $suppurl = $env['API_SUPP_URL'];
+  $mailpotglurl = $env['API_MAILPO_TGL_URL'];
+  $level = $_SESSION['level'];
+  $envappkey = $env['APP_KEY'];
+
+  if ($appkey !== $envappkey) {
+    header("Location: login.php");
+    exit();
+  }
+
+$p = $_GET['p'] ?? '';
+$query = base64_decode(urldecode($p));
+parse_str($query,$params);
+
+$supp   = $params['supp'] ?? '';
+$tahun  = $params['tahun'] ?? '';
+$bulan  = $params['bulan'] ?? '';
+$status = $params['status'] ?? '';
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<title>Purchase Order</title>
+
+<link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
+
+<style>
+#poTable tbody tr:hover{
+  background-color:#e9f5ff;
+}
+
+.row-confirmed{
+  background-color:#d4edda !important;
+}
+
+.row-rejected{
+  background-color:#f8d7da !important;
+}
+
+#poTable tbody tr:hover{
+  background-color:#e9f5ff;
+}
+
+.row-selected{
+  background-color:#fff3cd !important;
+}
+
+.table-container{
+  max-height:600px;
+  overflow:auto;
+  border:1px solid #ddd;
+}
+
+/* FREEZE HEADER */
+#poTable thead th{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background:#212529; /* warna bootstrap table-dark */
+  color:white;
+  white-space:nowrap;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<br>
+
+<img src="assets/gambar/jvc.gif"
+style="float:left;width:220px;height:35px;">
+
+PT JVCKENWOOD ELECTRONICS INDONESIA<br>
+PURCHASE ORDER DETAIL&nbsp;&nbsp;*** The Purchase Order consider accepted if there is no reply within 5 days ***<br><br>
+
+<div class="container mt-3">
+
+<div id="supplierinfo" class="mb-2 fw-bold"></div>
+
+<div class="mb-3">
+
+<label><b>STATUS :</b></label>
+
+<select id="suppstatus" class="form-select" style="width:200px;display:inline-block;">
+<option value="CONFIRMED">CONFIRMED</option>
+<option value="REJECTED">REJECTED</option>
+</select>
+
+<br><br>
+
+<label><b>REASON :</b></label>
+
+<div class="d-flex align-items-center gap-2 mb-4">
+
+<input type="text"
+id="suppreason"
+class="form-control"
+style="width:400px;"
+placeholder="INPUT REASON IF REJECTED">
+
+<button class="btn btn-primary" onclick="updateStatus()">
+UPDATE
+</button>
+
+<button class="btn btn-success" onclick="downloadTable()">
+Download Excel
+</button>
+
+</div>
+
+
+<div class="table-container">
+<table class="table table-bordered table-striped" id="poTable">
+
+<thead class="table-dark">
+
+<tr>
+
+<th><input type="checkbox" id="checkAllTop"></th>
+<th>NO</th>
+<th>TRANSMISSION NUMBER</th>
+<th>PO NUMBER</th>
+<th>PART NUMBER</th>
+<th>PART NAME</th>
+<th>PO QTY</th>
+<th>PO DATE</th>
+<th>PRICE</th>
+<th>MODEL</th>
+<th>PO TYPE</th>
+<th>SUPP STATUS</th>
+<th>SUPP REASON</th>
+<th>BY</th>
+<th>AT</th>
+<th>PUR STATUS</th>
+<th>PUR REASON</th>
+<th>BY</th>
+<th>AT</th>
+<th>MC STATUS</th>
+<th>MC REASON</th>
+<th>BY</th>
+<th>AT</th>
+
+</tr>
+
+</thead>
+
+<tbody></tbody>
+
+</table>
+</div>
+</div>
+
+<script>
+
+const supp   = "<?= $supp ?>";
+const tahun  = "<?= $tahun ?>";
+const bulan  = "<?= $bulan ?>";
+const status = "<?= $status ?>";
+
+let urlmailpodtl = '';
+
+const reasonawal = document.getElementById("suppreason");
+reasonawal.disabled = true;
+
+
+
+fetch('getsession.php',
+{
+  method: 'GET',
+  headers:
+  {
+    'X-Requested-With': 'XMLHttpRequest'
+  }
+})
+.then(response => response.json())
+.then(async data =>
+{
+  user = data.user;
+  level = data.level;
+  appkey = data.appkey;
+  urlsupp = data.urlsupp;
+  urlmailpodtl = data.urlmailpodtl;
+
+  await updateReadStatus();
+
+  loadData();
+})
+.catch(err => console.error(err));
+
+
+async function updateReadStatus()
+{
+
+  if(level != 3) return;
+
+  try
+  {
+    await fetch("../api/apimailporead.php",
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        rdate:rdate,
+        supp:supp
+      })
+
+    });
+
+  }
+  catch(err)
+  {
+    console.error(err);
+  }
+
+}
+
+async function loadData()
+{
+  try
+  {
+
+    const response = await fetch(urlmailpodtl,
+    {
+      method: "POST",
+      headers:
+      {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        rdate: rdate,
+        supp: supp,
+        status: status
+      })
+    });
+
+    const result = await response.json();
+    const data = result.data;
+
+    if (data.length > 0)
+    {
+      const supplier = data[0].supplier;
+      const suppliername = data[0].suppliername;
+
+      document.getElementById("supplierinfo").innerHTML =
+      "SUPPLIER : " + supplier + " - " + suppliername;
+    }
+
+    const tbody = document.querySelector("#poTable tbody");
+
+    let rows = "";
+
+    data.forEach((item, index) =>
+    {
+
+     let rowClass = "";
+
+if(item.supconfstatus === "CONFIRMED")
+  rowClass = "row-confirmed";
+
+if(item.supconfstatus === "REJECTED")
+  rowClass = "row-rejected";
+
+rows += `<tr class="${rowClass}">
+
+<td><input type="checkbox" class="rowcheck" value="${item.idno}"></td>
+
+<td>${index+1}</td>
+<td>${item.idno}</td>
+<td>${item.pono.trim()}</td>
+<td><pre>${item.partno.trim()}</pre></td>
+<td>${item.partname.trim()}</td>
+<td align="right">${item.newqty}</td>
+<td>${item.newdate}</td>
+<td align="right">${Number(item.price).toFixed(5)}</td>
+<td>${item.model.trim()}</td>
+<td>${item.potype.trim()}</td>
+<td>${item.supconfstatus ?? ''}</td>
+<td>${item.supconfreason ?? ''}</td>
+<td>${item.supconfby ?? ''}</td>
+<td>${item.supconfat ?? ''}</td>
+<td>${item.purconfstatus ?? ''}</td>
+<td>${item.purconfreason ?? ''}</td>
+<td>${item.purconfby ?? ''}</td>
+<td>${item.purconfat ?? ''}</td>
+<td>${item.mcconfstatus ?? ''}</td>
+<td>${item.mcconfreason ?? ''}</td>
+<td>${item.mcconfby ?? ''}</td>
+<td>${item.mcconfat ?? ''}</td>
+
+</tr>`;
+
+    });
+
+    tbody.innerHTML = rows;
+
+  }
+  catch(err)
+  {
+    console.error(err);
+  }
+}
+
+
+
+async function updateStatus()
+{
+
+  const status = document.getElementById("suppstatus").value;
+  const reason = document.getElementById("suppreason").value.trim();
+
+  if(status === "")
+  {
+    alert("Please select status");
+    return;
+  }
+
+  if(status === "REJECTED" && reason === "")
+  {
+    alert("Please input reason");
+    return;
+  }
+
+  const checked = document.querySelectorAll(".rowcheck:checked");
+
+  if(checked.length === 0)
+  {
+    alert("Please select record");
+    return;
+  }
+
+  let ids = [];
+
+  checked.forEach(cb=>{
+    ids.push(cb.value);
+  });
+
+  try
+  {
+
+    const response = await fetch("../api/apimailpoupdate.php",
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        ids:ids,
+        status:status,
+        reason:reason,
+        level:level
+      })
+    });
+
+    const result = await response.json();
+
+    alert(result.message);
+
+   
+   loadData();
+
+  }
+  catch(err)
+  {
+    console.error(err);
+  }
+
+}
+
+
+
+function highlightRow(cb)
+{
+  const row = cb.closest("tr");
+
+  if(cb.checked)
+    row.classList.add("row-selected");
+  else
+    row.classList.remove("row-selected");
+}
+
+
+
+document.addEventListener("change", function(e)
+{
+
+  if(e.target.id === "checkAllTop")
+  {
+
+    const checked = e.target.checked;
+
+    document.querySelectorAll(".rowcheck").forEach(cb =>
+    {
+      cb.checked = checked;
+      highlightRow(cb);
+    });
+
+  }
+
+
+  if(e.target.classList.contains("rowcheck"))
+  {
+    highlightRow(e.target);
+  }
+
+});
+
+
+
+document.getElementById("suppstatus").addEventListener("change", function()
+{
+
+  const reason = document.getElementById("suppreason");
+
+  if(this.value === "REJECTED")
+  {
+    reason.disabled = false;
+  }
+  else
+  {
+    reason.value = "";
+    reason.disabled = true;
+  }
+
+});
+
+function downloadTable()
+{
+
+  const table = document.getElementById("poTable");
+  let csv = [];
+
+  for (let i = 0; i < table.rows.length; i++)
+  {
+
+    let row = [];
+    let cols = table.rows[i].querySelectorAll("th, td");
+
+    for (let j = 0; j < cols.length; j++)
+    {
+
+      // skip kolom checkbox
+      if(j === 0) continue;
+
+      let text = cols[j].innerText.replace(/\n/g," ").trim();
+      row.push('"' + text + '"');
+
+    }
+
+    csv.push(row.join(","));
+
+  }
+
+  const csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+
+  const downloadLink = document.createElement("a");
+
+  downloadLink.download = "po.csv";
+  downloadLink.href = window.URL.createObjectURL(csvFile);
+
+  downloadLink.style.display = "none";
+
+  document.body.appendChild(downloadLink);
+
+  downloadLink.click();
+
+}
+
+</script>
+
+</body>
+</html>

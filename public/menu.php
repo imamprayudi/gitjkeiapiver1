@@ -51,8 +51,9 @@ if ($level == 3) {
             Orders
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="dashboardmailpo.php">Purchase Order Dashboard</a></li>
-            <li><a class="dropdown-item" href="pohist.php">Purchase Order History</a></li>
+            <li><a class="dropdown-item" href="dashboardmailpoall.php">Purchase Order Dashboard</a></li>
+            <li><a class="dropdown-item" href="pohist.php">Find Purchase Order History</a></li>
+            <li><a class="dropdown-item" href="mailportgl.php">Purchase Order Change History</a></li>
             <li><a class="dropdown-item" href="mailpotgl.php">Purchase Order</a></li>
             <li><a class="dropdown-item" href="mailpoctgl.php">Purchase Order Change</a></li>
             <li><a class="dropdown-item" href="ob.php">Order Balance</a></li>

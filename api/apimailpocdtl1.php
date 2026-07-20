@@ -1,0 +1,96 @@
+<?php
+// ======================
+// HEADER
+// ======================
+header("Access-Control-Allow-Origin: http://localhost");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json; charset=utf-8");
+header("X-Content-Type-Options: nosniff");
+header("Cache-Control: no-cache, private");
+header_remove("X-Powered-By");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+
+// ======================
+// POST ONLY
+// ======================
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(["status"=>"failed"]);
+    exit();
+}
+
+
+// ======================
+// PDO CONNECTION
+// ======================
+$env = parse_ini_file(__DIR__ . '/../config/.env');
+
+// ===== koneksi PDO =====
+$host = $env['DB_HOST'];
+$dbname = $env['DB_NAME'];     
+$user = $env['DB_USER'];    
+$pass = $env['DB_PASSWORD'];      
+$charset = "utf8mb4";
+
+$dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
+
+$pdo = new PDO($dsn, $user, $pass, [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+]);
+
+
+// ======================
+// INPUT
+// ======================
+$tahun = trim($_POST['tahun'] ?? '');
+$bulan = trim($_POST['bulan'] ?? '');
+$suppid  = trim($_POST['supp'] ?? '');
+$status   = trim($_POST['status'] ?? '');
+
+// ======================
+// QUERY (PDO)
+// ======================
+$sql = "
+SELECT 
+    idno,pono,partno,partname,newqty,newdate,oldqty,olddate,price,
+    model,potype,altno,status,supconfstatus,supconfreason,supconfby,supconfat,
+    purconfstatus,purconfreason,purconfby,purconfat,
+    mcconfstatus,mcconfreason,mcconfby,mcconfat,supplier,suppliername,rdate
+FROM mailpoc
+WHERE supplier = ?
+  AND year(rdate) = ?
+  AND month(rdate) = ?
+";
+
+$params = [$suppid, $tahun, $bulan];
+if($status !== ''){
+    $sql .= " AND supconfstatus = ? ";
+    $params[] = $status;
+}
+
+$sql .= " ORDER BY idno ASC ";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+
+$data = $stmt->fetchAll();
+
+
+// ======================
+// RESPONSE
+// ======================
+echo json_encode([
+    "status" => "success",
+    "data"   => $data
+]);
+
+exit();
+?>

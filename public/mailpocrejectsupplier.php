@@ -25,8 +25,11 @@ $query = base64_decode(urldecode($p));
 
 parse_str($query, $params);
 
+$filterby = $params['filterby'] ?? 'month';
 $tahun = $params['tahun'] ?? '';
 $bulan = $params['bulan'] ?? '';
+$tglawal = $params['tglawal'] ?? '';
+$tglakhir = $params['tglakhir'] ?? '';
 ?>
 <!DOCTYPE html>
   <html lang="en">
@@ -60,13 +63,17 @@ PURCHASE ORDER CHANGE REJECT BY SUPPLIER
 <div class="card-body">
 
 <div class="mb-3">
-
-<b>Tahun :</b> <?= $tahun ?>
-
+<?php if ($filterby === 'range') { ?>
+<b>Date Between :</b> <?= htmlspecialchars($tglawal) ?>
+&nbsp;&nbsp;
+<b>AND</b>
+&nbsp;&nbsp;
+<?= htmlspecialchars($tglakhir) ?>
+<?php } else { ?>
+<b>Tahun :</b> <?= htmlspecialchars($tahun) ?>
 &nbsp;&nbsp;&nbsp;
-
-<b>Bulan :</b> <?= $bulan ?>
-
+<b>Bulan :</b> <?= htmlspecialchars($bulan) ?>
+<?php } ?>
 </div>
 
 <table class="table table-bordered table-hover" id="tblRejectSupplier">
@@ -104,8 +111,11 @@ PURCHASE ORDER CHANGE REJECT BY SUPPLIER
 </div>
 <script>
 
-const tahun = "<?= $tahun ?>";
-const bulan = "<?= $bulan ?>";
+const filterby = "<?= htmlspecialchars($filterby, ENT_QUOTES) ?>";
+const tahun = "<?= htmlspecialchars($tahun, ENT_QUOTES) ?>";
+const bulan = "<?= htmlspecialchars($bulan, ENT_QUOTES) ?>";
+const tglawal = "<?= htmlspecialchars($tglawal, ENT_QUOTES) ?>";
+const tglakhir = "<?= htmlspecialchars($tglakhir, ENT_QUOTES) ?>";
 
 function encryptParam(data)
 {
@@ -142,8 +152,11 @@ async function loadData()
                 'Content-Type':'application/x-www-form-urlencoded'
             },
             body:new URLSearchParams({
+                filterby: filterby,
                 tahun: tahun,
-                bulan: bulan
+                bulan: bulan,
+                tglawal: tglawal,
+                tglakhir: tglakhir
             })
         });
 
@@ -156,7 +169,9 @@ async function loadData()
         result.data.forEach((item,index)=>{
 
             const param = encryptParam(
-                `supp=${item.supplier}&tahun=${tahun}&bulan=${bulan}`
+                filterby === "range"
+                    ? `supp=${item.supplier}&filterby=range&tglawal=${tglawal}&tglakhir=${tglakhir}`
+                    : `supp=${item.supplier}&tahun=${tahun}&bulan=${bulan}`
             );
 
             tbody.innerHTML += `

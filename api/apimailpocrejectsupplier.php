@@ -49,15 +49,32 @@ $pdo = new PDO($dsn, $user, $pass, [
 // ======================
 // INPUT
 // ======================
+$filterby = trim($_POST['filterby'] ?? 'month');
 $tahun = trim($_POST['tahun'] ?? '');
 $bulan = trim($_POST['bulan'] ?? '');
+$tglawal = trim($_POST['tglawal'] ?? '');
+$tglakhir = trim($_POST['tglakhir'] ?? '');
 
-if ($tahun === '' || $bulan === '') {
-    echo json_encode([
-        "status" => "failed",
-        "message" => "Parameter tahun dan bulan harus diisi"
-    ]);
-    exit();
+if ($filterby === 'range') {
+    if ($tglawal === '' || $tglakhir === '') {
+        echo json_encode([
+            "status" => "failed",
+            "message" => "Parameter tanggal harus diisi"
+        ]);
+        exit();
+    }
+    $dateWhere = "rdate BETWEEN ? AND ?";
+    $params = [$tglawal, $tglakhir];
+} else {
+    if ($tahun === '' || $bulan === '') {
+        echo json_encode([
+            "status" => "failed",
+            "message" => "Parameter tahun dan bulan harus diisi"
+        ]);
+        exit();
+    }
+    $dateWhere = "YEAR(rdate) = ? AND MONTH(rdate) = ?";
+    $params = [$tahun, $bulan];
 }
 
 
@@ -70,15 +87,14 @@ SELECT
     suppliername,
     COUNT(DISTINCT pono) AS total
 FROM mailpoc
-WHERE YEAR(rdate) = ?
-  AND MONTH(rdate) = ?
+WHERE $dateWhere
   AND supconfstatus = 'REJECTED'
 GROUP BY supplier, suppliername
 ORDER BY supplier
 ";
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute([$tahun, $bulan]);
+$stmt->execute($params);
 
 $data = $stmt->fetchAll();
 

@@ -50,8 +50,11 @@ $pdo = new PDO($dsn, $user, $pass, [
 // ======================
 // INPUT
 // ======================
+$filterby = trim($_POST['filterby'] ?? 'month');
 $tahun = trim($_POST['tahun'] ?? '');
 $bulan = trim($_POST['bulan'] ?? '');
+$tglawal = trim($_POST['tglawal'] ?? '');
+$tglakhir = trim($_POST['tglakhir'] ?? '');
 $suppid  = trim($_POST['supp'] ?? '');
 $status   = trim($_POST['status'] ?? '');
 
@@ -66,11 +69,19 @@ SELECT
     mcconfstatus,mcconfreason,mcconfby,mcconfat,supplier,suppliername,rdate
 FROM mailpoc
 WHERE supplier = ?
-  AND year(rdate) = ?
-  AND month(rdate) = ?
 ";
 
-$params = [$suppid, $tahun, $bulan];
+$params = [$suppid];
+
+if ($filterby === 'range' && $tglawal !== '' && $tglakhir !== '') {
+    $sql .= " AND rdate BETWEEN ? AND ? ";
+    $params[] = $tglawal;
+    $params[] = $tglakhir;
+} else {
+    $sql .= " AND year(rdate) = ? AND month(rdate) = ? ";
+    $params[] = $tahun;
+    $params[] = $bulan;
+}
 if($status !== ''){
     $sql .= " AND supconfstatus = ? ";
     $params[] = $status;

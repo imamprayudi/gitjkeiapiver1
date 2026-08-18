@@ -50,13 +50,15 @@ if (!isset($_SESSION['user'])) {
     PT JVCKENWOOD ELECTRONICS INDONESIA<br />
     PURCHASE ORDER DASHBOARD 
 
-    <form action="">
-<label for="idtahun">TAHUN :</label>
+    <form action="">&nbsp;&nbsp;
+<label><input type="radio" name="filterby" value="month" checked onchange="updateFilterMode()"> YEAR / MONTH</label>
+&nbsp;&nbsp;
+<label for="idtahun">YEAR :</label>
 <input type="number" id="idtahun" name="tahun" style="width:90px;">
 
 &nbsp;&nbsp;
 
-<label for="idbulan">BULAN :</label>
+<label for="idbulan">MONTH :</label>
 <select id="idbulan" name="bulan">
     <option value="1">Januari</option>
     <option value="2">Februari</option>
@@ -71,6 +73,16 @@ if (!isset($_SESSION['user'])) {
     <option value="11">November</option>
     <option value="12">Desember</option>
 </select>
+
+&nbsp;&nbsp;|&nbsp;&nbsp;
+
+<label><input type="radio" name="filterby" value="range" onchange="updateFilterMode()"> DATE RANGE</label>
+&nbsp;&nbsp;
+<label for="idtglawal">DATE BETWEEN :</label>
+<input type="date" id="idtglawal" name="tglawal" disabled>
+&nbsp;&nbsp;
+<label for="idtglakhir">AND</label>
+<input type="date" id="idtglakhir" name="tglakhir" disabled>
 
 <input type="submit" value="Display">
 </form>
@@ -201,6 +213,21 @@ fetch('getsession.php',
 .catch(err => console.error(err));
 
 
+function getFilterBy()
+{
+    const selected = document.querySelector('input[name="filterby"]:checked');
+    return selected ? selected.value : "month";
+}
+
+function updateFilterMode()
+{
+    const isRange = getFilterBy() === "range";
+    document.getElementById("idtahun").disabled = isRange;
+    document.getElementById("idbulan").disabled = isRange;
+    document.getElementById("idtglawal").disabled = !isRange;
+    document.getElementById("idtglakhir").disabled = !isRange;
+}
+
 function encryptParam(data)
 {
   return encodeURIComponent(btoa(data));
@@ -208,13 +235,50 @@ function encryptParam(data)
 
 function displayData()
 {
-    const tahun = document.getElementById('idtahun').value;
-    const bulan = document.getElementById('idbulan').value;
+    const filterby = getFilterBy();
 
-    getMailpo(tahun, bulan);
+    if (filterby === "range")
+    {
+        const tglawal = document.getElementById("idtglawal").value;
+        const tglakhir = document.getElementById("idtglakhir").value;
+
+        if (tglawal === "" || tglakhir === "")
+        {
+            alert("Input date range");
+            return;
+        }
+
+        if (tglawal > tglakhir)
+        {
+            alert("Start date must be before end date");
+            return;
+        }
+
+        getMailpo({
+            filterby: "range",
+            tglawal: tglawal,
+            tglakhir: tglakhir
+        });
+        return;
+    }
+
+    const tahun = document.getElementById("idtahun").value;
+    const bulan = document.getElementById("idbulan").value;
+
+    if (tahun === "" || bulan === "")
+    {
+        alert("Input year and month");
+        return;
+    }
+
+    getMailpo({
+        filterby: "month",
+        tahun: tahun,
+        bulan: bulan
+    });
 }
 
-async function getMailpo(tahun, bulan)
+async function getMailpo(params)
 {
   try
   {
@@ -222,10 +286,7 @@ async function getMailpo(tahun, bulan)
     {
       method:'POST',
       headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body:new URLSearchParams({
-        tahun:tahun,
-        bulan:bulan
-      })
+      body:new URLSearchParams(params)
     });
 
     const result = await response.json();
@@ -260,19 +321,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const now = new Date();
 
-    // Tahun sekarang
     document.getElementById("idtahun").value = now.getFullYear();
-
-    // Bulan sekarang (1-12)
     document.getElementById("idbulan").value = (now.getMonth() + 1).toString();
+    updateFilterMode();
+    displayData();
 
 });
 
 document.getElementById("cardRejectPoc").addEventListener("click", function () {
 
-    const tahun = document.getElementById("idtahun").value;
-    const bulan = document.getElementById("idbulan").value;
-    const param = encryptParam(`tahun=${tahun}&bulan=${bulan}`);
+    let query = "";
+    if (getFilterBy() === "range")
+    {
+        const tglawal = document.getElementById("idtglawal").value;
+        const tglakhir = document.getElementById("idtglakhir").value;
+        query = `filterby=range&tglawal=${tglawal}&tglakhir=${tglakhir}`;
+    }
+    else
+    {
+        const tahun = document.getElementById("idtahun").value;
+        const bulan = document.getElementById("idbulan").value;
+        query = `filterby=month&tahun=${tahun}&bulan=${bulan}`;
+    }
+
+    const param = encryptParam(query);
 
     window.open(
         `mailpocrejectsupplier.php?p=${param}`,

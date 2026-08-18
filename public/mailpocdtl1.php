@@ -19,8 +19,11 @@ $query = base64_decode(urldecode($p));
 
 parse_str($query, $params);
 
+$filterby = $params['filterby'] ?? 'month';
 $tahun  = $params['tahun'] ?? '';
 $bulan  = $params['bulan'] ?? '';
+$tglawal = $params['tglawal'] ?? '';
+$tglakhir = $params['tglakhir'] ?? '';
 $supp   = $params['supp'] ?? '';
 $status = $params['status'] ?? '';
 
@@ -165,9 +168,12 @@ Download Excel
 </div>
 
 <script>
-const tahun  = "<?= $tahun ?>";
-const bulan  = "<?= $bulan ?>";
-const supp   = "<?= $supp ?>";
+const filterby = "<?= htmlspecialchars($filterby, ENT_QUOTES) ?>";
+const tahun  = "<?= htmlspecialchars($tahun, ENT_QUOTES) ?>";
+const bulan  = "<?= htmlspecialchars($bulan, ENT_QUOTES) ?>";
+const tglawal = "<?= htmlspecialchars($tglawal, ENT_QUOTES) ?>";
+const tglakhir = "<?= htmlspecialchars($tglakhir, ENT_QUOTES) ?>";
+const supp   = "<?= htmlspecialchars($supp, ENT_QUOTES) ?>";
 const status = 'REJECTED';
 let urlmailpocdtl = '';
 
@@ -236,8 +242,11 @@ async function loadData()
         "Content-Type": "application/x-www-form-urlencoded"
       },
       body: new URLSearchParams({
+        filterby:filterby,
         tahun:tahun,
         bulan:bulan,
+        tglawal:tglawal,
+        tglakhir:tglakhir,
         supp:supp,
         status:status
       })

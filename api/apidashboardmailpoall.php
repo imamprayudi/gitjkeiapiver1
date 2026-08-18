@@ -43,22 +43,38 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit('Halaman ini tidak bisa langsung diakses tanpa dari posting.');
 }
 
+$filterby = trim($_POST['filterby'] ?? 'month');
 $tahun    = $_POST['tahun'] ?? '';
 $bulan    = $_POST['bulan'] ?? '';
+$tglawal  = trim($_POST['tglawal'] ?? '');
+$tglakhir = trim($_POST['tglakhir'] ?? '');
 
-if (!$tahun || !$bulan) 
-{
-  echo json_encode([
-      "status" => "error",
-      "message" => "parameter tidak lengkap"
-  ]);
-  exit;
-}
-
-if ($bulan == 'ALL') {
-    $filterBulan = "";
+if ($filterby === 'range') {
+    if ($tglawal === '' || $tglakhir === '') {
+        echo json_encode([
+            "status" => "error",
+            "message" => "parameter tidak lengkap"
+        ]);
+        exit;
+    }
+    $dateWhere = "rdate BETWEEN ? AND ?";
+    $one = [$tglawal, $tglakhir];
 } else {
-    $filterBulan = "AND MONTH(rdate) = ?";
+    if (!$tahun || !$bulan) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "parameter tidak lengkap"
+        ]);
+        exit;
+    }
+
+    if ($bulan == 'ALL') {
+        $dateWhere = "YEAR(rdate) = ?";
+        $one = [$tahun];
+    } else {
+        $dateWhere = "YEAR(rdate) = ? AND MONTH(rdate) = ?";
+        $one = [$tahun, $bulan];
+    }
 }
 
 $sql = "
@@ -70,29 +86,25 @@ SELECT
 (
     SELECT COUNT(*)
     FROM mailpo
-    WHERE YEAR(rdate) = ?
-      $filterBulan
+    WHERE $dateWhere
 ) AS po_total
 ,
 (
     SELECT SUM(supconfstatus='UNREAD')
     FROM mailpo
-    WHERE YEAR(rdate) = ?
-      $filterBulan
+    WHERE $dateWhere
 ) AS po_unread
 ,
 (
     SELECT SUM(supconfstatus='READ')
     FROM mailpo
-    WHERE YEAR(rdate) = ?
-      $filterBulan
+    WHERE $dateWhere
 ) AS po_read
 ,
 (
     SELECT SUM(supconfstatus='REJECTED')
     FROM mailpo
-    WHERE YEAR(rdate) = ?
-      $filterBulan
+    WHERE $dateWhere
 ) AS po_reject
 ,
 /* =======================
@@ -101,63 +113,29 @@ SELECT
 (
     SELECT COUNT(*)
     FROM mailpoc
-    WHERE YEAR(rdate) = ?
-      $filterBulan 
+    WHERE $dateWhere 
 ) AS poc_total
 ,
 (
     SELECT SUM(supconfstatus='UNREAD')
     FROM mailpoc
-    WHERE YEAR(rdate) = ?
-      $filterBulan
+    WHERE $dateWhere
 ) AS poc_unread
 ,
 (
     SELECT SUM(supconfstatus='READ')
     FROM mailpoc
-    WHERE YEAR(rdate) = ?
-      $filterBulan
+    WHERE $dateWhere
 ) AS poc_read
 ,
 (
     SELECT SUM(supconfstatus='REJECTED')
     FROM mailpoc
-    WHERE YEAR(rdate) = ?
-      $filterBulan
+    WHERE $dateWhere
 ) AS poc_reject
 ";
 
-
-
-if ($bulan == 'ALL') {
-
-    $params = [
-        $tahun,
-        $tahun,
-        $tahun,
-        $tahun,
-
-        $tahun,
-        $tahun,
-        $tahun,
-        $tahun
-    ];
-
-}else {
-
-    $params = [
-        $tahun,$bulan,
-        $tahun,$bulan,
-        $tahun,$bulan,
-        $tahun,$bulan,
-
-        $tahun,$bulan,
-        $tahun,$bulan,
-        $tahun,$bulan,
-        $tahun,$bulan
-    ];
-
-}
+$params = array_merge($one, $one, $one, $one, $one, $one, $one, $one);
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);

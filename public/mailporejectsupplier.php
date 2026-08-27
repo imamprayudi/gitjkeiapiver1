@@ -37,7 +37,7 @@ $tglakhir = $params['tglakhir'] ?? '';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <title>Purchase Order Repeat</title>
+  <title>Purchase Order Reject</title>
   <link id="favicon" rel="icon" type="image/png" href="assets/gambar/g-green.png">
   </head>
   <body>
@@ -47,7 +47,7 @@ $tglakhir = $params['tglakhir'] ?? '';
      style="float:left;width:220px;height:35px;">
 
 PT JVCKENWOOD ELECTRONICS INDONESIA<br>
-PURCHASE ORDER CHANGE REJECT BY SUPPLIER
+PURCHASE ORDER REJECT BY SUPPLIER
 <br><br>
 
 <div class="container-fluid">
@@ -56,7 +56,7 @@ PURCHASE ORDER CHANGE REJECT BY SUPPLIER
 
 <div class="card-header bg-danger text-white">
 
-<b>Reject POC Supplier</b>
+<b>Reject PO Supplier</b>
 
 </div>
 
@@ -122,30 +122,30 @@ function encryptParam(data)
     return encodeURIComponent(btoa(data));
 }
 
-fetch('getsession.php', 
+fetch('getsession.php',
 {
   method: 'GET',
-  headers: 
+  headers:
   {
   'X-Requested-With': 'XMLHttpRequest'
   }
 })
 .then(response => response.json())
-.then(async data => 
+.then(async data =>
 {
   user = data.user;
   level = data.level;
   appkey = data.appkey;
-  urlsupp = data.urlsupp;  
+  urlsupp = data.urlsupp;
   loadData();
-}) 
+})
 .catch(err => console.error(err));
 
 async function loadData()
 {
     try
     {
-        const response = await fetch('../api/apimailpocrejectsupplier.php',
+        const response = await fetch('../api/apimailporejectsupplier.php',
         {
             method:'POST',
             headers:{
@@ -181,7 +181,7 @@ async function loadData()
                 <td>${item.suppliername.trim()}</td>
                 <td align="right">${item.total}</td>
                 <td>
-                    <a href="mailpocdtl1.php?p=${param}"
+                    <a href="mailpodtl1.php?p=${param}"
                        class="btn btn-primary btn-sm"
                        target="_blank">
                        VIEW DETAIL

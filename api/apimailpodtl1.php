@@ -34,9 +34,9 @@ $env = parse_ini_file(__DIR__ . '/../config/.env');
 
 // ===== koneksi PDO =====
 $host = $env['DB_HOST'];
-$dbname = $env['DB_NAME'];     
-$user = $env['DB_USER'];    
-$pass = $env['DB_PASSWORD'];      
+$dbname = $env['DB_NAME'];
+$user = $env['DB_USER'];
+$pass = $env['DB_PASSWORD'];
 $charset = "utf8mb4";
 
 $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
@@ -46,6 +46,7 @@ $pdo = new PDO($dsn, $user, $pass, [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 ]);
 
+
 // ======================
 // INPUT
 // ======================
@@ -54,49 +55,45 @@ $tahun = trim($_POST['tahun'] ?? '');
 $bulan = trim($_POST['bulan'] ?? '');
 $tglawal = trim($_POST['tglawal'] ?? '');
 $tglakhir = trim($_POST['tglakhir'] ?? '');
-
-if ($filterby === 'range') {
-    if ($tglawal === '' || $tglakhir === '') {
-        echo json_encode([
-            "status" => "failed",
-            "message" => "Parameter tanggal harus diisi"
-        ]);
-        exit();
-    }
-    $dateWhere = "rdate BETWEEN ? AND ?";
-    $params = [$tglawal, $tglakhir];
-} else {
-    if ($tahun === '' || $bulan === '') {
-        echo json_encode([
-            "status" => "failed",
-            "message" => "Parameter tahun dan bulan harus diisi"
-        ]);
-        exit();
-    }
-    $dateWhere = "YEAR(rdate) = ? AND MONTH(rdate) = ?";
-    $params = [$tahun, $bulan];
-}
-
+$suppid  = trim($_POST['supp'] ?? '');
+$status   = trim($_POST['status'] ?? '');
 
 // ======================
-// QUERY
+// QUERY (PDO)
 // ======================
 $sql = "
-SELECT
-    supplier,
-    suppliername,
-    COUNT(DISTINCT pono) AS total
-FROM mailpoc
-WHERE $dateWhere
-  AND supconfstatus = 'REJECTED'
-GROUP BY supplier, suppliername
-ORDER BY supplier
+SELECT 
+    idno,pono,partno,partname,newqty,newdate,price,
+    model,potype,supconfstatus,supconfreason,supconfby,supconfat,
+    purconfstatus,purconfreason,purconfby,purconfat,
+    mcconfstatus,mcconfreason,mcconfby,mcconfat,supplier,suppliername,rdate
+FROM mailpo
+WHERE supplier = ?
 ";
+
+$params = [$suppid];
+
+if ($filterby === 'range' && $tglawal !== '' && $tglakhir !== '') {
+    $sql .= " AND rdate BETWEEN ? AND ? ";
+    $params[] = $tglawal;
+    $params[] = $tglakhir;
+} else {
+    $sql .= " AND year(rdate) = ? AND month(rdate) = ? ";
+    $params[] = $tahun;
+    $params[] = $bulan;
+}
+if($status !== ''){
+    $sql .= " AND supconfstatus = ? ";
+    $params[] = $status;
+}
+
+$sql .= " ORDER BY idno ASC ";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 
 $data = $stmt->fetchAll();
+
 
 // ======================
 // RESPONSE

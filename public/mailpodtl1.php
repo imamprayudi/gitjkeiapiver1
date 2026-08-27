@@ -25,8 +25,11 @@ $query = base64_decode(urldecode($p));
 parse_str($query,$params);
 
 $supp   = $params['supp'] ?? '';
+$filterby = $params['filterby'] ?? 'month';
 $tahun  = $params['tahun'] ?? '';
 $bulan  = $params['bulan'] ?? '';
+$tglawal = $params['tglawal'] ?? '';
+$tglakhir = $params['tglakhir'] ?? '';
 $status = $params['status'] ?? '';
 
 ?>
@@ -173,10 +176,13 @@ Download Excel
 
 <script>
 
-const supp   = "<?= $supp ?>";
-const tahun  = "<?= $tahun ?>";
-const bulan  = "<?= $bulan ?>";
-const status = "<?= $status ?>";
+const supp   = "<?= htmlspecialchars($supp, ENT_QUOTES) ?>";
+const filterby = "<?= htmlspecialchars($filterby, ENT_QUOTES) ?>";
+const tahun  = "<?= htmlspecialchars($tahun, ENT_QUOTES) ?>";
+const bulan  = "<?= htmlspecialchars($bulan, ENT_QUOTES) ?>";
+const tglawal = "<?= htmlspecialchars($tglawal, ENT_QUOTES) ?>";
+const tglakhir = "<?= htmlspecialchars($tglakhir, ENT_QUOTES) ?>";
+const status = 'REJECTED';
 
 let urlmailpodtl = '';
 
@@ -213,6 +219,7 @@ async function updateReadStatus()
 {
 
   if(level != 3) return;
+  if (typeof rdate === "undefined" || !rdate) return;
 
   try
   {
@@ -243,7 +250,7 @@ async function loadData()
   try
   {
 
-    const response = await fetch(urlmailpodtl,
+    const response = await fetch('../api/apimailpodtl1.php',
     {
       method: "POST",
       headers:
@@ -251,7 +258,11 @@ async function loadData()
         "Content-Type": "application/x-www-form-urlencoded"
       },
       body: new URLSearchParams({
-        rdate: rdate,
+        filterby: filterby,
+        tahun: tahun,
+        bulan: bulan,
+        tglawal: tglawal,
+        tglakhir: tglakhir,
         supp: supp,
         status: status
       })

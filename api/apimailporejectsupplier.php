@@ -34,9 +34,9 @@ $env = parse_ini_file(__DIR__ . '/../config/.env');
 
 // ===== koneksi PDO =====
 $host = $env['DB_HOST'];
-$dbname = $env['DB_NAME'];     
-$user = $env['DB_USER'];    
-$pass = $env['DB_PASSWORD'];      
+$dbname = $env['DB_NAME'];
+$user = $env['DB_USER'];
+$pass = $env['DB_PASSWORD'];
 $charset = "utf8mb4";
 
 $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
@@ -86,7 +86,7 @@ SELECT
     supplier,
     suppliername,
     COUNT(DISTINCT pono) AS total
-FROM mailpoc
+FROM mailpo
 WHERE $dateWhere
   AND supconfstatus = 'REJECTED'
 GROUP BY supplier, suppliername

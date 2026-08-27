@@ -331,8 +331,11 @@ function renderOriginalPOTable(rows) {
     let inner = "<thead><tr>";
     inner += "<th>TRANSMISSION NUMBER</th>";
     inner += "<th>TRANSMISSION DATE</th>";
+<<<<<<< HEAD
     inner += "<th>SUPP</th>";
     inner += "<th>SUPP NAME</th>";
+=======
+>>>>>>> a63eba5d3d3b098978fac3356009c019c02e873e
     inner += "<th>PO NUMBER</th>";
     inner += "<th>PART NUMBER</th>";
     inner += "<th>PART NAME</th>";
@@ -359,8 +362,11 @@ function renderOriginalPOTable(rows) {
         inner += "<tr>";
         inner += "<td>" + cell(r.idno) + "</td>";
         inner += "<td>" + cell(r.rdate) + "</td>";
+<<<<<<< HEAD
         inner += "<td>" + String(cell(r.supplier)).trim() + "</td>";
         inner += "<td>" + String(cell(r.suppliername)).trim() + "</td>";
+=======
+>>>>>>> a63eba5d3d3b098978fac3356009c019c02e873e
         inner += "<td>" + cell(r.pono) + "</td>";
         inner += "<td><pre>" + cell(r.partno) + "</pre></td>";
         inner += "<td>" + cell(r.partname) + "</td>";
@@ -402,8 +408,11 @@ function renderRevisionTable(rows) {
     inner += "<th>NO</th>";
     inner += "<th>TRANSMISSION NUMBER</th>";
     inner += "<th>TRANSMISSION DATE</th>";
+<<<<<<< HEAD
     inner += "<th>SUPP</th>";
     inner += "<th>SUPP NAME</th>";
+=======
+>>>>>>> a63eba5d3d3b098978fac3356009c019c02e873e
     inner += "<th>PO NUMBER</th>";
     inner += "<th>PART NUMBER</th>";
     inner += "<th>PART NAME</th>";
@@ -435,8 +444,11 @@ function renderRevisionTable(rows) {
         inner += "<td>"+(index+1)+"</td>";
         inner += "<td>"+cell(r.idno)+"</td>";
         inner += "<td>"+cell(r.rdate)+"</td>";
+<<<<<<< HEAD
         inner += "<td>"+String(cell(r.supplier)).trim()+"</td>";
         inner += "<td>"+String(cell(r.suppliername)).trim()+"</td>";
+=======
+>>>>>>> a63eba5d3d3b098978fac3356009c019c02e873e
         inner += "<td>"+cell(r.pono)+"</td>";
         inner += "<td><pre>"+cell(r.partno)+"</pre></td>";
         inner += "<td>"+cell(r.partname)+"</td>";

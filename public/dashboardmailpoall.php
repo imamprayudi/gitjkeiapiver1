@@ -339,28 +339,10 @@ function getRejectQuery()
         return `filterby=range&tglawal=${tglawal}&tglakhir=${tglakhir}`;
     }
 
-<<<<<<< HEAD
     const tahun = document.getElementById("idtahun").value;
     const bulan = document.getElementById("idbulan").value;
     return `filterby=month&tahun=${tahun}&bulan=${bulan}`;
 }
-=======
-    let query = "";
-    if (getFilterBy() === "range")
-    {
-        const tglawal = document.getElementById("idtglawal").value;
-        const tglakhir = document.getElementById("idtglakhir").value;
-        query = `filterby=range&tglawal=${tglawal}&tglakhir=${tglakhir}`;
-    }
-    else
-    {
-        const tahun = document.getElementById("idtahun").value;
-        const bulan = document.getElementById("idbulan").value;
-        query = `filterby=month&tahun=${tahun}&bulan=${bulan}`;
-    }
-
-    const param = encryptParam(query);
->>>>>>> a63eba5d3d3b098978fac3356009c019c02e873e
 
 document.getElementById("cardRejectPo").addEventListener("click", function () {
     const param = encryptParam(getRejectQuery());

@@ -111,6 +111,23 @@ body{
     background:#0b5ed7;
 }
 
+.btn-excel{
+    background:#198754;
+    border:none;
+    padding:6px 16px;
+    color:white;
+    border-radius:6px;
+}
+
+.btn-excel:hover{
+    background:#157347;
+}
+
+.btn-excel:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
 .btn-remove{
     background:#fff;
     border:1px solid #dc3545;
@@ -238,6 +255,7 @@ body{
     <div class="mt-2">
         <button type="button" id="btnAddKeyword" class="btn-add" onclick="addKeywordBox()">Add</button>
         <button type="button" class="btn-search" onclick="searchPO()">Search</button>
+        <button type="button" id="btnDownloadExcel" class="btn-excel" onclick="downloadExcel()" disabled>Download Excel</button>
     </div>
 </div>
 
@@ -249,6 +267,9 @@ body{
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 <script>
+let lastMailpo = [];
+let lastMailpoc = [];
+
 function getSearchBy() {
     const selected = document.querySelector('input[name="searchby"]:checked');
     return selected ? selected.value : "pono";
@@ -546,23 +567,202 @@ async function searchPO() {
         const mailpo = Array.isArray(result.mailpo) ? result.mailpo : [];
         const mailpoc = Array.isArray(result.mailpoc) ? result.mailpoc : [];
 
+        lastMailpo = mailpo;
+        lastMailpoc = mailpoc;
+
         if(mailpo.length === 0 && mailpoc.length === 0)
         {
             html = "<div class='empty-state'>Data not found</div>";
+            setExcelButton(false);
         }
         else
         {
             html = renderGroupedPO(mailpo, mailpoc);
+            setExcelButton(true);
         }
 
     }
     else
     {
+        lastMailpo = [];
+        lastMailpoc = [];
+        setExcelButton(false);
         html="<div class='empty-state'>"+result.message+"</div>";
     }
 
     document.getElementById("result").innerHTML=html;
 
+}
+
+function setExcelButton(enabled) {
+    document.getElementById("btnDownloadExcel").disabled = !enabled;
+}
+
+function excelText(v) {
+    return String(v === null || v === undefined ? "" : v)
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "")
+        .trim();
+}
+
+function excelEscape(v) {
+    return excelText(v)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+function excelCell(v, type) {
+    if (type === "Number" && v !== null && v !== undefined && v !== "" && !isNaN(v)) {
+        return '<Cell><Data ss:Type="Number">' + v + "</Data></Cell>";
+    }
+    return '<Cell><Data ss:Type="String">' + excelEscape(v) + "</Data></Cell>";
+}
+
+function excelRow(values, types) {
+    let xml = "<Row>";
+    values.forEach(function(v, i) {
+        xml += excelCell(v, types && types[i] ? types[i] : "String");
+    });
+    xml += "</Row>";
+    return xml;
+}
+
+function excelSheet(name, headers, rowsXml) {
+    return '<Worksheet ss:Name="' + excelEscape(name) + '"><Table>' +
+        excelRow(headers) +
+        rowsXml +
+        "</Table></Worksheet>";
+}
+
+function originalPoExcelRows(rows) {
+    let xml = "";
+    rows.forEach(function(r) {
+        xml += excelRow([
+            cell(r.idno),
+            cell(r.rdate),
+            excelText(r.supplier),
+            excelText(r.suppliername),
+            cell(r.pono),
+            cell(r.partno),
+            cell(r.partname),
+            cell(r.newqty),
+            cell(r.newdate),
+            cell(r.price),
+            cell(r.model),
+            cell(r.potype),
+            cell(r.supconfstatus),
+            cell(r.supconfreason),
+            cell(r.supconfby),
+            cell(r.supconfat),
+            cell(r.purconfstatus),
+            cell(r.purconfreason),
+            cell(r.purconfby),
+            cell(r.purconfat),
+            cell(r.mcconfstatus),
+            cell(r.mcconfreason),
+            cell(r.mcconfby),
+            cell(r.mcconfat)
+        ], [
+            "String","String","String","String","String","String","String",
+            "Number","String","Number","String","String",
+            "String","String","String","String",
+            "String","String","String","String",
+            "String","String","String","String"
+        ]);
+    });
+    return xml;
+}
+
+function revisionExcelRows(rows) {
+    let xml = "";
+    rows.forEach(function(r, index) {
+        xml += excelRow([
+            index + 1,
+            cell(r.idno),
+            cell(r.rdate),
+            excelText(r.supplier),
+            excelText(r.suppliername),
+            cell(r.pono),
+            cell(r.partno),
+            cell(r.partname),
+            cell(r.newqty),
+            cell(r.newdate),
+            cell(r.oldqty),
+            cell(r.olddate),
+            cell(r.price),
+            cell(r.model),
+            cell(r.potype),
+            cell(r.altno),
+            cell(r.status),
+            cell(r.supconfstatus),
+            cell(r.supconfreason),
+            cell(r.supconfby),
+            cell(r.supconfat),
+            cell(r.purconfstatus),
+            cell(r.purconfreason),
+            cell(r.purconfby),
+            cell(r.purconfat),
+            cell(r.mcconfstatus),
+            cell(r.mcconfreason),
+            cell(r.mcconfby),
+            cell(r.mcconfat)
+        ], [
+            "Number","String","String","String","String","String","String","String",
+            "Number","String","Number","String","Number","String","String","String",
+            "String","String","String","String","String",
+            "String","String","String","String",
+            "String","String","String","String"
+        ]);
+    });
+    return xml;
+}
+
+function downloadExcel() {
+    if (lastMailpo.length === 0 && lastMailpoc.length === 0) {
+        alert("Search data first");
+        return;
+    }
+
+    const originalHeaders = [
+        "TRANSMISSION NUMBER","TRANSMISSION DATE","SUPP","SUPP NAME","PO NUMBER",
+        "PART NUMBER","PART NAME","PO QTY","PO DATE","PRICE","MODEL","PO TYPE",
+        "SUPP STATUS","SUPP REASON","SUPP BY","SUPP AT",
+        "PUR STATUS","PUR REASON","PUR BY","PUR AT",
+        "MC STATUS","MC REASON","MC BY","MC AT"
+    ];
+    const revisionHeaders = [
+        "NO","TRANSMISSION NUMBER","TRANSMISSION DATE","SUPP","SUPP NAME","PO NUMBER",
+        "PART NUMBER","PART NAME","NEW QTY","NEW DATE","OLD QTY","OLD DATE",
+        "PRICE","MODEL","PO TYPE","ALT NO","PO STATUS",
+        "SUPP STATUS","SUPP REASON","SUPP BY","SUPP AT",
+        "PUR STATUS","PUR REASON","PUR BY","PUR AT",
+        "MC STATUS","MC REASON","MC BY","MC AT"
+    ];
+
+    const xml = '<' + '?xml version="1.0" encoding="UTF-8"?>' +
+        '<' + '?mso-application progid="Excel.Sheet"?>' +
+        '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"' +
+        ' xmlns:o="urn:schemas-microsoft-com:office:office"' +
+        ' xmlns:x="urn:schemas-microsoft-com:office:excel"' +
+        ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
+        excelSheet("Original PO", originalHeaders, originalPoExcelRows(lastMailpo)) +
+        excelSheet("Revision History", revisionHeaders, revisionExcelRows(lastMailpoc)) +
+        "</Workbook>";
+
+    const blob = new Blob(["\uFEFF" + xml], { type: "application/vnd.ms-excel" });
+    const now = new Date();
+    const ymd = now.getFullYear() +
+        String(now.getMonth() + 1).padStart(2, "0") +
+        String(now.getDate()).padStart(2, "0");
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "PO_HISTORY_" + ymd + ".xls";
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(link.href);
 }
 </script>
    </body>

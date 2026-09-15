@@ -69,9 +69,9 @@ if (($handle = fopen($file, "r")) !== FALSE) {
 
 $pdo->exec(" UPDATE mailpoctoday 
 SET status = CASE 
-WHEN newqty = 0 THEN 'CANCELED' 
-WHEN newqty < oldqty THEN 'MIN QTY' 
-WHEN newqty > oldqty THEN 'PLUS QTY'
+WHEN newqty = 0 THEN 'CANCELLATION' 
+WHEN newqty < oldqty THEN 'REDUCE QTY' 
+WHEN newqty > oldqty THEN 'INCREASE QTY'
 WHEN newqty = oldqty AND newdate < olddate THEN 'UP' 
 WHEN newqty = oldqty AND newdate > olddate THEN 'DOWN' 
 ELSE 'NO CHANGE' END ");

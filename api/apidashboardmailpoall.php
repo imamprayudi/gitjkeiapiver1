@@ -96,7 +96,7 @@ SELECT
 ) AS po_unread
 ,
 (
-    SELECT SUM(supconfstatus='READ')
+    SELECT SUM(supconfstatus IN ('READ','CONFIRMED','REJECTED'))
     FROM mailpo
     WHERE $dateWhere
 ) AS po_read
@@ -123,7 +123,7 @@ SELECT
 ) AS poc_unread
 ,
 (
-    SELECT SUM(supconfstatus='READ')
+    SELECT SUM(supconfstatus IN ('READ','CONFIRMED','REJECTED'))
     FROM mailpoc
     WHERE $dateWhere
 ) AS poc_read

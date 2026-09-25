@@ -67,14 +67,21 @@ if (($handle = fopen($file, "r")) !== FALSE) {
 // 3. UPDATE STATUS 
 // ============================ 
 
-$pdo->exec(" UPDATE mailpoctoday 
-SET status = CASE 
-WHEN newqty = 0 THEN 'CANCELLATION' 
-WHEN newqty < oldqty THEN 'REDUCE QTY' 
-WHEN newqty > oldqty THEN 'INCREASE QTY'
-WHEN newqty = oldqty AND newdate < olddate THEN 'UP' 
-WHEN newqty = oldqty AND newdate > olddate THEN 'DOWN' 
-ELSE 'NO CHANGE' END ");
+$pdo->exec("
+UPDATE mailpoctoday
+SET status = CASE
+    WHEN newdate < olddate AND newqty = oldqty THEN 'UP'
+    WHEN newdate > olddate AND newqty = oldqty THEN 'DOWN'
+    WHEN newqty = 0 THEN 'CANCELLATION'
+    WHEN newqty < oldqty AND newdate = olddate THEN 'REDUCE QTY'
+    WHEN newqty > oldqty AND newdate = olddate THEN 'INCREASE QTY'
+    WHEN newdate < olddate AND newqty < oldqty AND newqty <> 0 THEN 'UP & REDUCE QTY'
+    WHEN newdate < olddate AND newqty > oldqty THEN 'UP & INCREASE QTY'
+    WHEN newdate > olddate AND newqty < oldqty AND newqty <> 0 THEN 'DOWN & REDUCE QTY'
+    WHEN newdate > olddate AND newqty > oldqty THEN 'DOWN & INCREASE QTY'
+    ELSE 'NO CHANGE'
+END
+");
 
 // ============================
 // 3. INSERT MAILPOCTODAY → MAILPOC

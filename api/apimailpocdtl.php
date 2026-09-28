@@ -62,7 +62,8 @@ SELECT
     idno,pono,partno,partname,newqty,newdate,oldqty,olddate,price,
     model,potype,altno,status,supconfstatus,supconfreason,supconfby,supconfat,
     purconfstatus,purconfreason,purconfby,purconfat,
-    mcconfstatus,mcconfreason,mcconfby,mcconfat,supplier,suppliername,rdate
+    mcconfstatus,mcconfreason,mcconfby,mcconfat,
+    planconfstatus,planconfreason,planconfby,planconfat,supplier,suppliername,rdate
 FROM mailpoc
 WHERE supplier = ?
   AND rdate  = ?

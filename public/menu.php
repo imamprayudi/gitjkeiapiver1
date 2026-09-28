@@ -32,7 +32,7 @@ if (!function_exists('menuItemClass')) {
 }
 
 $forecastPages = ['forecast.php', 'forecastarc.php'];
-$orderPages = ['dashboardmailpoall.php', 'pohist.php', 'mailportgl.php', 'mailpotgl.php', 'mailpoctgl.php', 'ob.php'];
+$orderPages = ['dashboardmailpoall.php', 'dashboardmailpocall.php', 'pohist.php', 'mailportgl.php', 'mailpotgl.php', 'mailpoctgl.php', 'ob.php'];
 $schedulePages = ['tds.php', 'bps.php'];
 $materialPages = ['matsum.php', 'matrec.php', 'matiss.php'];
 $soaPages = ['soa.php', 'soamid.php', 'soaend.php'];
@@ -268,6 +268,7 @@ body{
     <summary>Orders</summary>
     <div class="jkei-group-body">
       <a class="<?php echo menuItemClass('dashboardmailpoall.php'); ?>" href="dashboardmailpoall.php">Purchase Order Dashboard</a>
+      <a class="<?php echo menuItemClass('dashboardmailpocall.php'); ?>" href="dashboardmailpocall.php">Purchase Order Change Dashboard</a>
       <a class="<?php echo menuItemClass('pohist.php'); ?>" href="pohist.php">Find Purchase Order History</a>
       <a class="<?php echo menuItemClass('mailportgl.php'); ?>" href="mailportgl.php">Purchase Order Change History</a>
       <a class="<?php echo menuItemClass('mailpotgl.php'); ?>" href="mailpotgl.php">Purchase Order</a>

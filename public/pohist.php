@@ -374,6 +374,10 @@ function renderOriginalPOTable(rows) {
     inner += "<th>MC REASON</th>";
     inner += "<th>BY</th>";
     inner += "<th>AT</th>";
+    inner += "<th>PLAN STATUS</th>";
+    inner += "<th>PLAN REASON</th>";
+    inner += "<th>BY</th>";
+    inner += "<th>AT</th>";
     inner += "</tr></thead><tbody>";
 
     rows.forEach(function(r){
@@ -402,6 +406,10 @@ function renderOriginalPOTable(rows) {
         inner += "<td>" + cell(r.mcconfreason) + "</td>";
         inner += "<td>" + cell(r.mcconfby) + "</td>";
         inner += "<td>" + cell(r.mcconfat) + "</td>";
+        inner += "<td>" + statusBadge(r.planconfstatus) + "</td>";
+        inner += "<td>" + cell(r.planconfreason) + "</td>";
+        inner += "<td>" + cell(r.planconfby) + "</td>";
+        inner += "<td>" + cell(r.planconfat) + "</td>";
         inner += "</tr>";
     });
 
@@ -449,6 +457,10 @@ function renderRevisionTable(rows) {
     inner += "<th>MC REASON</th>";
     inner += "<th>BY</th>";
     inner += "<th>AT</th>";
+    inner += "<th>PLAN STATUS</th>";
+    inner += "<th>PLAN REASON</th>";
+    inner += "<th>BY</th>";
+    inner += "<th>AT</th>";
     inner += "</tr></thead><tbody>";
 
     rows.forEach(function(r,index){
@@ -482,6 +494,10 @@ function renderRevisionTable(rows) {
         inner += "<td>"+cell(r.mcconfreason)+"</td>";
         inner += "<td>"+cell(r.mcconfby)+"</td>";
         inner += "<td>"+cell(r.mcconfat)+"</td>";
+        inner += "<td>"+statusBadge(r.planconfstatus)+"</td>";
+        inner += "<td>"+cell(r.planconfreason)+"</td>";
+        inner += "<td>"+cell(r.planconfby)+"</td>";
+        inner += "<td>"+cell(r.planconfat)+"</td>";
         inner += "</tr>";
     });
 
@@ -662,10 +678,15 @@ function originalPoExcelRows(rows) {
             cell(r.mcconfstatus),
             cell(r.mcconfreason),
             cell(r.mcconfby),
-            cell(r.mcconfat)
+            cell(r.mcconfat),
+            cell(r.planconfstatus),
+            cell(r.planconfreason),
+            cell(r.planconfby),
+            cell(r.planconfat)
         ], [
             "String","String","String","String","String","String","String",
             "Number","String","Number","String","String",
+            "String","String","String","String",
             "String","String","String","String",
             "String","String","String","String",
             "String","String","String","String"
@@ -706,11 +727,16 @@ function revisionExcelRows(rows) {
             cell(r.mcconfstatus),
             cell(r.mcconfreason),
             cell(r.mcconfby),
-            cell(r.mcconfat)
+            cell(r.mcconfat),
+            cell(r.planconfstatus),
+            cell(r.planconfreason),
+            cell(r.planconfby),
+            cell(r.planconfat)
         ], [
             "Number","String","String","String","String","String","String","String",
             "Number","String","Number","String","Number","String","String","String",
             "String","String","String","String","String",
+            "String","String","String","String",
             "String","String","String","String",
             "String","String","String","String"
         ]);
@@ -729,7 +755,8 @@ function downloadExcel() {
         "PART NUMBER","PART NAME","PO QTY","PO DATE","PRICE","MODEL","PO TYPE",
         "SUPP STATUS","SUPP REASON","SUPP BY","SUPP AT",
         "PUR STATUS","PUR REASON","PUR BY","PUR AT",
-        "MC STATUS","MC REASON","MC BY","MC AT"
+        "MC STATUS","MC REASON","MC BY","MC AT",
+        "PLAN STATUS","PLAN REASON","PLAN BY","PLAN AT"
     ];
     const revisionHeaders = [
         "NO","TRANSMISSION NUMBER","TRANSMISSION DATE","SUPP","SUPP NAME","PO NUMBER",
@@ -737,7 +764,8 @@ function downloadExcel() {
         "PRICE","MODEL","PO TYPE","ALT NO","PO STATUS",
         "SUPP STATUS","SUPP REASON","SUPP BY","SUPP AT",
         "PUR STATUS","PUR REASON","PUR BY","PUR AT",
-        "MC STATUS","MC REASON","MC BY","MC AT"
+        "MC STATUS","MC REASON","MC BY","MC AT",
+        "PLAN STATUS","PLAN REASON","PLAN BY","PLAN AT"
     ];
 
     const xml = '<' + '?xml version="1.0" encoding="UTF-8"?>' +

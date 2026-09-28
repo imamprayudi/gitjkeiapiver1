@@ -106,6 +106,13 @@ if ($level == 3) {
     $byField     = "mcconfby";
     $atField     = "mcconfat";
 
+} elseif ($level == 7) {
+
+    $statusField = "planconfstatus";
+    $reasonField = "planconfreason";
+    $byField     = "planconfby";
+    $atField     = "planconfat";
+
 } else {
 
     echo json_encode([

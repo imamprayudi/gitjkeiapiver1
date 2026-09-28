@@ -152,6 +152,10 @@ Download Excel
 <th>MC REASON</th>
 <th>BY</th>
 <th>AT</th>
+<th>PLAN STATUS</th>
+<th>PLAN REASON</th>
+<th>BY</th>
+<th>AT</th>
 
 </tr>
 </thead>
@@ -294,6 +298,10 @@ rows += `<tr class="${rowClass}">
         <td>${item.mcconfreason ?? ''}</td>
         <td>${item.mcconfby ?? ''}</td>
         <td>${item.mcconfat ?? ''}</td>
+        <td>${item.planconfstatus ?? ''}</td>
+        <td>${item.planconfreason ?? ''}</td>
+        <td>${item.planconfby ?? ''}</td>
+        <td>${item.planconfat ?? ''}</td>
       </tr>`;
 
     });

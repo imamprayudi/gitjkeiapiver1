@@ -82,6 +82,10 @@ SELECT
     mcconfreason,
     mcconfby,
     mcconfat,
+    planconfstatus,
+    planconfreason,
+    planconfby,
+    planconfat,
     supplier,
     suppliername,
     rdate

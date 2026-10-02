@@ -77,6 +77,25 @@ $status = $params['status'] ?? '';
   white-space:nowrap;
 }
 
+#poTable thead th[data-field]{
+  cursor:pointer;
+  user-select:none;
+}
+
+#poTable thead th[data-field]:hover{
+  background:#343a40;
+}
+
+#poTable thead th.sort-asc::after{
+  content:" ▲";
+  font-size:11px;
+}
+
+#poTable thead th.sort-desc::after{
+  content:" ▼";
+  font-size:11px;
+}
+
 
 </style>
 
@@ -130,35 +149,35 @@ Download Excel
 <tr>
 <th><input type="checkbox" id="checkAllTop"></th>
 <th>NO</th>
-<th>TRANSMISSION NUMBER</th>
-<th>PO NUMBER</th>
-<th>PART NUMBER</th>
-<th>PART NAME</th>
-<th>NEW QTY</th>
-<th>NEW DATE</th>
-<th>OLD QTY</th>
-<th>OLD DATE</th>
-<th>PRICE</th>
-<th>MODEL</th>
-<th>PO TYPE</th>
-<th>ALT NO</th>
-<th>PO STATUS</th>
-<th>SUPP STATUS</th>
-<th>SUPP REASON</th>
-<th>BY</th>
-<th>AT</th>
-<th>PUR STATUS</th>
-<th>PUR REASON</th>
-<th>BY</th>
-<th>AT</th>
-<th>MC STATUS</th>
-<th>MC REASON</th>
-<th>BY</th>
-<th>AT</th>
-<th>PLAN STATUS</th>
-<th>PLAN REASON</th>
-<th>BY</th>
-<th>AT</th>
+<th data-field="idno">TRANSMISSION NUMBER</th>
+<th data-field="pono">PO NUMBER</th>
+<th data-field="partno">PART NUMBER</th>
+<th data-field="partname">PART NAME</th>
+<th data-field="newqty">NEW QTY</th>
+<th data-field="newdate">NEW DATE</th>
+<th data-field="oldqty">OLD QTY</th>
+<th data-field="olddate">OLD DATE</th>
+<th data-field="price">PRICE</th>
+<th data-field="model">MODEL</th>
+<th data-field="potype">PO TYPE</th>
+<th data-field="altno">ALT NO</th>
+<th data-field="status">PO STATUS</th>
+<th data-field="supconfstatus">SUPP STATUS</th>
+<th data-field="supconfreason">SUPP REASON</th>
+<th data-field="supconfby">BY</th>
+<th data-field="supconfat">AT</th>
+<th data-field="purconfstatus">PUR STATUS</th>
+<th data-field="purconfreason">PUR REASON</th>
+<th data-field="purconfby">BY</th>
+<th data-field="purconfat">AT</th>
+<th data-field="mcconfstatus">MC STATUS</th>
+<th data-field="mcconfreason">MC REASON</th>
+<th data-field="mcconfby">BY</th>
+<th data-field="mcconfat">AT</th>
+<th data-field="planconfstatus">PLAN STATUS</th>
+<th data-field="planconfreason">PLAN REASON</th>
+<th data-field="planconfby">BY</th>
+<th data-field="planconfat">AT</th>
 
 </tr>
 </thead>
@@ -180,6 +199,9 @@ const tglakhir = "<?= htmlspecialchars($tglakhir, ENT_QUOTES) ?>";
 const supp   = "<?= htmlspecialchars($supp, ENT_QUOTES) ?>";
 const status = 'REJECTED';
 let urlmailpocdtl = '';
+let tableData = [];
+let sortField = "";
+let sortDir = "asc";
 
 const reasonawal = document.getElementById("suppreason");
 reasonawal.disabled = true;
@@ -257,31 +279,90 @@ async function loadData()
     });
 
     const result = await response.json();
-    const data = result.data;
-    if (data.length > 0) {
-      const supplier = data[0].supplier;
-      const suppliername = data[0].suppliername;
+    tableData = Array.isArray(result.data) ? result.data : [];
+    if (tableData.length > 0) {
+      const supplier = tableData[0].supplier;
+      const suppliername = tableData[0].suppliername;
       document.getElementById("supplierinfo").innerHTML =
       "SUPPLIER : " + supplier + " - " + suppliername;
     }
-    const tbody = document.querySelector("#poTable tbody");
+    renderTable();
 
-    let rows = "";
+  }
+  catch(err)
+  {
+    console.error(err);
+  }
+}
 
-    data.forEach((item, index) =>
+function sortValue(item, field)
+{
+  const value = item[field];
+  if (value === null || value === undefined) {
+    return "";
+  }
+  return value;
+}
+
+function compareRows(a, b, field, dir)
+{
+  const numberFields = ["newqty", "oldqty", "price"];
+  let va = sortValue(a, field);
+  let vb = sortValue(b, field);
+
+  if (numberFields.indexOf(field) !== -1)
+  {
+    va = Number(va);
+    vb = Number(vb);
+    if (isNaN(va)) va = 0;
+    if (isNaN(vb)) vb = 0;
+    return dir === "asc" ? va - vb : vb - va;
+  }
+
+  va = String(va).trim().toUpperCase();
+  vb = String(vb).trim().toUpperCase();
+  if (va < vb) return dir === "asc" ? -1 : 1;
+  if (va > vb) return dir === "asc" ? 1 : -1;
+  return 0;
+}
+
+function updateSortHeader()
+{
+  document.querySelectorAll("#poTable thead th[data-field]").forEach(function(th)
+  {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.getAttribute("data-field") === sortField)
     {
+      th.classList.add(sortDir === "asc" ? "sort-asc" : "sort-desc");
+    }
+  });
+}
 
-     let rowClass = "";
+function renderTable()
+{
+  const rowsData = tableData.slice();
+  if (sortField)
+  {
+    rowsData.sort(function(a, b)
+    {
+      return compareRows(a, b, sortField, sortDir);
+    });
+  }
 
-if(item.supconfstatus === "CONFIRMED")
-  rowClass = "row-confirmed";
+  const tbody = document.querySelector("#poTable tbody");
+  let rows = "";
 
-if(item.supconfstatus === "REJECTED")
-  rowClass = "row-rejected";
+  rowsData.forEach(function(item, index)
+  {
+    let rowClass = "";
 
-rows += `<tr class="${rowClass}">
+    if(item.supconfstatus === "CONFIRMED")
+      rowClass = "row-confirmed";
 
+    if(item.supconfstatus === "REJECTED")
+      rowClass = "row-rejected";
 
+    rows += `<tr class="${rowClass}">
    <td><input type="checkbox" class="rowcheck" value="${item.idno}"></td>
         <td>${index+1}</td>
         <td>${item.idno}</td>
@@ -314,17 +395,29 @@ rows += `<tr class="${rowClass}">
         <td>${item.planconfby ?? ''}</td>
         <td>${item.planconfat ?? ''}</td>
       </tr>`;
+  });
 
-    });
-
-    tbody.innerHTML = rows;
-
-  }
-  catch(err)
-  {
-    console.error(err);
-  }
+  tbody.innerHTML = rows;
+  updateSortHeader();
 }
+
+document.querySelector("#poTable thead").addEventListener("click", function(e)
+{
+  const th = e.target.closest("th[data-field]");
+  if (!th) return;
+
+  const field = th.getAttribute("data-field");
+  if (sortField === field)
+  {
+    sortDir = (sortDir === "asc") ? "desc" : "asc";
+  }
+  else
+  {
+    sortField = field;
+    sortDir = "asc";
+  }
+  renderTable();
+});
 
 async function updateStatus()
 {

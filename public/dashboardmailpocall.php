@@ -185,6 +185,87 @@ if (!isset($_SESSION['user'])) {
       </div>
     </div>
 
+    <div class="col-md-3">
+      <div class="card shadow border-0">
+        <div class="card-body text-center">
+          <h1 id="poc_up_forecast" class="display-5 fw-bold text-info">0</h1>
+          <div class="card-label">UP UNDER FORECAST</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow border-0">
+        <div class="card-body text-center">
+          <h1 id="poc_down_forecast" class="display-5 fw-bold text-secondary">0</h1>
+          <div class="card-label">DOWN UNDER FORECAST</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow border-0">
+        <div class="card-body text-center">
+          <h1 id="poc_cancellation_forecast" class="display-5 fw-bold text-danger">0</h1>
+          <div class="card-label">CANCELLATION UNDER FORECAST</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow border-0">
+        <div class="card-body text-center">
+          <h1 id="poc_reduce_qty_forecast" class="display-5 fw-bold text-warning">0</h1>
+          <div class="card-label">REDUCE QTY UNDER FORECAST</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow border-0">
+        <div class="card-body text-center">
+          <h1 id="poc_increase_qty_forecast" class="display-5 fw-bold text-success">0</h1>
+          <div class="card-label">INCREASE QTY UNDER FORECAST</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow border-0">
+        <div class="card-body text-center">
+          <h1 id="poc_up_reduce_qty_forecast" class="display-5 fw-bold text-info">0</h1>
+          <div class="card-label">UP &amp; REDUCE QTY UNDER FORECAST</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow border-0">
+        <div class="card-body text-center">
+          <h1 id="poc_up_increase_qty_forecast" class="display-5 fw-bold text-success">0</h1>
+          <div class="card-label">UP &amp; INCREASE QTY UNDER FORECAST</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow border-0">
+        <div class="card-body text-center">
+          <h1 id="poc_down_reduce_qty_forecast" class="display-5 fw-bold text-warning">0</h1>
+          <div class="card-label">DOWN &amp; REDUCE QTY UNDER FORECAST</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow border-0">
+        <div class="card-body text-center">
+          <h1 id="poc_down_increase_qty_forecast" class="display-5 fw-bold text-primary">0</h1>
+          <div class="card-label">DOWN &amp; INCREASE QTY UNDER FORECAST</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -296,6 +377,15 @@ async function getMailpoc(params)
     document.getElementById("poc_up_increase_qty").innerHTML = d.poc_up_increase_qty;
     document.getElementById("poc_down_reduce_qty").innerHTML = d.poc_down_reduce_qty;
     document.getElementById("poc_down_increase_qty").innerHTML = d.poc_down_increase_qty;
+    document.getElementById("poc_up_forecast").innerHTML = d.poc_up_forecast;
+    document.getElementById("poc_down_forecast").innerHTML = d.poc_down_forecast;
+    document.getElementById("poc_cancellation_forecast").innerHTML = d.poc_cancellation_forecast;
+    document.getElementById("poc_reduce_qty_forecast").innerHTML = d.poc_reduce_qty_forecast;
+    document.getElementById("poc_increase_qty_forecast").innerHTML = d.poc_increase_qty_forecast;
+    document.getElementById("poc_up_reduce_qty_forecast").innerHTML = d.poc_up_reduce_qty_forecast;
+    document.getElementById("poc_up_increase_qty_forecast").innerHTML = d.poc_up_increase_qty_forecast;
+    document.getElementById("poc_down_reduce_qty_forecast").innerHTML = d.poc_down_reduce_qty_forecast;
+    document.getElementById("poc_down_increase_qty_forecast").innerHTML = d.poc_down_increase_qty_forecast;
   }
   catch(error)
   {

@@ -1,1 +1,2 @@
-php_flag expose_php Off
+# php_flag is not available under FastCGI (Laragon PHP 8.5).
+# expose_php is already hidden in security.php via header_remove("X-Powered-By").
